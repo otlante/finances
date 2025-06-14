@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Finances</string>
+    <string name="my_check">Мой счет</string>
+    <string name="change">Изменить</string>
+    <string name="balance">Баланс</string>
+    <string name="currency">Валюта</string>
+    <string name="expenses_today">Расходы сегодня</string>
+    <string name="history">История</string>
+    <string name="total">Всего</string>
+    <string name="income_today">Доходы сегодня</string>
+    <string name="my_expense_items">Мои статьи</string>
+    <string name="find_expense_item">Найти статью</string>
+    <string name="search">Search</string>
+    <string name="settings">Настройки</string>
+    <string name="about_the_program">О программе</string>
+    <string name="language">Язык</string>
+    <string name="synchronization">Синхронизация</string>
+    <string name="code_password">Код пароль</string>
+    <string name="haptics">Хаптики</string>
+    <string name="sounds">Звуки</string>
+    <string name="main_color">Основной цвет</string>
+    <string name="dark_theme">Тёмная тема</string>
+    <string name="add">Добавить</string>
+</resources>
