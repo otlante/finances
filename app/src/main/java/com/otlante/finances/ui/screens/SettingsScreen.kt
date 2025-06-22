@@ -1,56 +1,58 @@
-package com.otlante.finances.screens
+package com.otlante.finances.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
-import com.otlante.finances.R
-import com.otlante.finances.model.SettingItem
+import com.otlante.finances.ui.components.ListItem
 
 @Composable
 fun SettingsScreen() {
 
     val settingsItems = listOf(
         SettingItem(
-            title = stringResource(R.string.dark_theme),
+            title = "Тёмная тема",
             showSwitch = true,
         ),
         SettingItem(
-            title = stringResource(R.string.main_color),
+            title = "Основной цвет",
             showTrailing = true,
+            onClick = { }
         ),
         SettingItem(
-            title = stringResource(R.string.sounds),
+            title = "Звуки",
             showTrailing = true,
+            onClick = { }
         ),
         SettingItem(
-            title = stringResource(R.string.haptics),
+            title = "Хаптики",
             showTrailing = true,
+            onClick = { }
         ),
         SettingItem(
-            title = stringResource(R.string.code_password),
+            title = "Код пароль",
             showTrailing = true,
+            onClick = { }
         ),
         SettingItem(
-            title = stringResource(R.string.synchronization),
+            title = "Синхронизация",
             showTrailing = true,
+            onClick = { }
         ),
         SettingItem(
-            title = stringResource(R.string.language),
+            title = "Язык",
             showTrailing = true,
+            onClick = { }
         ),
         SettingItem(
-            title = stringResource(R.string.about_the_program),
+            title = "О программе",
             showTrailing = true,
+            onClick = { }
         )
     )
 
     Column {
-        ScreenHeader(
-            titleText = stringResource(R.string.settings),
-        )
         LazyColumn {
             items(settingsItems) { item ->
                 ListItem(
@@ -66,3 +68,12 @@ fun SettingsScreen() {
         }
     }
 }
+
+data class SettingItem(
+    val title: String,
+    val showArrow: Boolean = false,
+    val showTrailing: Boolean = false,
+    val showSwitch: Boolean = false,
+    val onCheckedChange: ((Boolean) -> Unit)? = null,
+    val onClick: (() -> Unit)? = null
+)
