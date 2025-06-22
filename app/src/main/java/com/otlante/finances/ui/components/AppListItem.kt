@@ -1,4 +1,4 @@
-package com.otlante.finances.screens
+package com.otlante.finances.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Switch
@@ -27,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.otlante.finances.R
@@ -41,38 +41,6 @@ fun isEmoji(content: String): Boolean {
 }
 
 @Composable
-fun ScreenHeader(
-    titleText: String,
-    iconImageId: Int? = null,
-    iconContentDescription: String = "",
-    onIconClick: () -> Unit = {}
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.onSecondaryContainer)
-            .padding(16.dp)
-    ) {
-        Text(
-            text = titleText,
-            style = typography.titleLarge,
-            modifier = Modifier.align(Alignment.Center)
-        )
-        iconImageId?.let {
-            IconButton(
-                onClick = onIconClick,
-                modifier = Modifier.align(Alignment.CenterEnd).size(24.dp)
-            ) {
-                Icon(
-                    painter = painterResource(iconImageId),
-                    contentDescription = iconContentDescription,
-                )
-            }
-        }
-    }
-}
-
-@Composable
 fun ListItem(
     modifier: Modifier = Modifier,
     type: ListItemType = ListItemType.BASIC,
@@ -80,6 +48,7 @@ fun ListItem(
     title: String,
     subtitle: String? = null,
     rightText: String? = null,
+    rightComment: String? = null,
     showArrow: Boolean = false,
     showTrailing: Boolean = false,
     showSwitch: Boolean = false,
@@ -93,7 +62,10 @@ fun ListItem(
     }
 
     val listItemTypeModifier = when (type) {
-        ListItemType.BASIC -> Modifier.height(72.dp).padding(horizontal = 16.dp)
+        ListItemType.BASIC -> Modifier
+            .height(72.dp)
+            .padding(horizontal = 16.dp)
+
         ListItemType.SUMMARIZE -> Modifier
             .background(MaterialTheme.colorScheme.secondaryContainer)
             .padding(horizontal = 16.dp, vertical = 16.dp)
@@ -117,18 +89,35 @@ fun ListItem(
             )
 
             subtitle?.let {
-                Text(
-                    text = it,
-                    style = typography.bodyMedium
-                )
+                if (it.isNotEmpty()) {
+                    Text(
+                        text = it,
+                        style = typography.bodyMedium
+                    )
+                }
             }
         }
 
         rightText?.let {
-            Text(
-                text = it,
-                style = typography.bodyLarge,
-            )
+            Column(
+                modifier = Modifier.weight(1f),
+            ) {
+                Text(
+                    text = it,
+                    style = typography.bodyLarge,
+                    modifier = Modifier.align(Alignment.End)
+                )
+
+                rightComment?.let { comment ->
+                    if (comment.isNotEmpty()) {
+                        Text(
+                            text = comment,
+                            style = typography.bodyMedium,
+                            modifier = Modifier.align(Alignment.End)
+                        )
+                    }
+                }
+            }
             if (showArrow || showTrailing || showSwitch) {
                 Spacer(modifier = Modifier.width(16.dp))
             }
@@ -137,12 +126,12 @@ fun ListItem(
         if (showArrow) {
             Icon(
                 painter = painterResource(R.drawable.ic_more),
-                contentDescription = "Подробнее",
+                contentDescription = stringResource(R.string.show_more),
             )
         } else if (showTrailing) {
             Icon(
                 painter = painterResource(R.drawable.ic_trailing_element),
-                contentDescription = "Подробнее",
+                contentDescription = stringResource(R.string.show_more),
             )
         } else if (showSwitch) {
             var checked by remember { mutableStateOf(true) }
