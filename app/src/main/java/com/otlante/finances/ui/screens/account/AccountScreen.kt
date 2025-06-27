@@ -2,6 +2,8 @@ package com.otlante.finances.ui.screens.account
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -21,6 +23,14 @@ import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
 
+/**
+ * Composable function that displays the account screen, including
+ * balance and currency information with support for pull-to-refresh,
+ * loading indicators, and error handling via snackbar.
+ *
+ * @param snackBarHostState the [SnackbarHostState] used to show error messages and retry prompts
+ * @param repository the [ApiRepository] instance used to fetch account data
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountScreen(snackBarHostState: SnackbarHostState, repository: ApiRepository) {
@@ -30,25 +40,34 @@ fun AccountScreen(snackBarHostState: SnackbarHostState, repository: ApiRepositor
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    uiState.error?.let { errorMessage ->
+        LaunchedEffect(errorMessage) {
+            val result = snackBarHostState.showSnackbar(
+                message = errorMessage.description,
+                actionLabel = "Retry"
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                viewModel.fetchAccount(initial = true)
+            }
+        }
+    }
 
     PullToRefreshBox(
         isRefreshing = uiState.isRefreshing,
         onRefresh = { viewModel.fetchAccount() },
         modifier = Modifier.fillMaxSize()
     ) {
-        if (uiState.isLoading) CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        else if (uiState.error != null) LaunchedEffect(uiState.error) {
-            uiState.error?.let { errorMessage ->
-                val result = snackBarHostState.showSnackbar(
-                    message = errorMessage.description,
-                    actionLabel = "Retry"
-                )
-                if (result == SnackbarResult.ActionPerformed) {
-                    viewModel.fetchAccount(initial = true)
-                }
-            }
+        when {
+            uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            else -> AccountContent(uiState)
         }
-        else Column(modifier = Modifier.fillMaxSize()) {
+    }
+}
+
+@Composable
+private fun AccountContent(uiState: AccountUiState) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
             ListItem(
                 type = ListItemType.SUMMARIZE,
                 emoji = "\uD83D\uDCB0",
@@ -59,7 +78,9 @@ fun AccountScreen(snackBarHostState: SnackbarHostState, repository: ApiRepositor
             )
 
             HorizontalDivider()
+        }
 
+        item {
             ListItem(
                 type = ListItemType.SUMMARIZE,
                 title = stringResource(R.string.currency),

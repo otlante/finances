@@ -1,4 +1,4 @@
-package com.otlante.finances.network
+package com.otlante.finances.data.remote
 
 import com.otlante.finances.domain.entity.Account
 import com.otlante.finances.domain.entity.Category
@@ -7,6 +7,10 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+/**
+ * Retrofit API service interface defining endpoints
+ * for accessing accounts, transactions, and categories.
+ */
 interface ApiService {
     @GET("accounts/{id}")
     suspend fun getAccountById(@Path("id") id: Int): Account

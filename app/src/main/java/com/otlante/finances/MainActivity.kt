@@ -8,9 +8,14 @@ import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.otlante.finances.ui.nav.RootNavGraph
-import com.otlante.finances.ui.screens.SplashViewModel
+import com.otlante.finances.ui.screens.splash.SplashViewModel
 import com.otlante.finances.ui.theme.FinancesTheme
 
+/**
+ * Main activity that hosts the entire application.
+ * Configures the splash screen behavior, handles edge-to-edge mode,
+ * and sets up the root navigation graph.
+ */
 class MainActivity : ComponentActivity() {
 
     private val viewModel: SplashViewModel by viewModels()

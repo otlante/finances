@@ -4,15 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.otlante.finances.network.NetworkError
-import com.otlante.finances.network.ResultState
+import com.otlante.finances.ui.utils.Formatter
+import com.otlante.finances.data.remote.NetworkError
 import com.otlante.finances.domain.entity.Transaction
 import com.otlante.finances.domain.repository.ApiRepository
-import com.otlante.finances.formatAmount
 import com.otlante.finances.ui.nav.NavDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -20,10 +18,25 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
+/**
+ * Types of date picker dialogs.
+ */
 enum class DatePickerDialogType {
     START_DATE, END_DATE
 }
 
+/**
+ * UI state for the history screen showing transactions.
+ *
+ * @property transactions List of transactions to display.
+ * @property startDate Selected start date of the period.
+ * @property endDate Selected end date of the period.
+ * @property totalSum Formatted total sum of displayed transactions.
+ * @property isLoading Indicates if data is loading.
+ * @property isRefreshing Indicates if a refresh is in progress.
+ * @property openDialog The currently open date picker dialog type, or null if none.
+ * @property error Network error if any occurred.
+ */
 data class HistoryUiState(
     val transactions: List<Transaction> = emptyList(),
     val startDate: LocalDate = LocalDate.now().withDayOfMonth(1),
@@ -35,6 +48,12 @@ data class HistoryUiState(
     val error: NetworkError? = null
 )
 
+/**
+ * ViewModel responsible for managing the history screen logic.
+ *
+ * @param repository Repository to fetch data from.
+ * @param savedStateHandle Saved state handle to retrieve navigation arguments.
+ */
 class HistoryViewModel(
     private val repository: ApiRepository,
     savedStateHandle: SavedStateHandle
@@ -96,29 +115,33 @@ class HistoryViewModel(
                 startDate = state.startDate.format(formatter),
                 endDate = state.endDate.format(formatter)
             ).fold(
-                onSuccess = { allTransactions ->
-                    val filtered = filterByParentRoute(allTransactions)
-                    val total = filtered.sumOf { it.amount.toDoubleOrNull() ?: 0.0 }
+                onSuccess = ::fetchHistorySuccess,
+                onError = ::fetchHistoryError
+            )
+        }
+    }
 
-                    _uiState.update {
-                        it.copy(
-                            transactions = formatTransactions(filtered),
-                            totalSum = formatAmount(total),
-                            isLoading = false,
-                            isRefreshing = false,
-                            error = null
-                        )
-                    }
-                },
-                onError = { error ->
-                    _uiState.update {
-                        it.copy(
-                            error = error,
-                            isLoading = false,
-                            isRefreshing = false
-                        )
-                    }
-                }
+    private fun fetchHistoryError(error: NetworkError) {
+        _uiState.update {
+            it.copy(
+                error = error,
+                isLoading = false,
+                isRefreshing = false
+            )
+        }
+    }
+
+    private fun fetchHistorySuccess(allTransactions: List<Transaction>) {
+        val filtered = filterByParentRoute(allTransactions)
+        val total = filtered.sumOf { it.amount.toDoubleOrNull() ?: 0.0 }
+
+        _uiState.update {
+            it.copy(
+                transactions = formatTransactions(filtered),
+                totalSum = Formatter.formatAmount(total),
+                isLoading = false,
+                isRefreshing = false,
+                error = null
             )
         }
     }
@@ -144,10 +167,16 @@ class HistoryViewModel(
     private fun formatTransactions(transactions: List<Transaction>): List<Transaction> {
         return transactions
             .sortedByDescending { it.transactionDate }
-            .map { it.copy(amount = formatAmount(it.amount)) }
+            .map { it.copy(amount = Formatter.formatAmount(it.amount)) }
     }
 }
 
+/**
+ * Factory for creating [HistoryViewModel] instances with parameters.
+ *
+ * @property repository Repository for data access.
+ * @property savedStateHandle Saved state handle for navigation arguments.
+ */
 class HistoryViewModelFactory(
     private val repository: ApiRepository,
     private val savedStateHandle: SavedStateHandle

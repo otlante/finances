@@ -23,6 +23,15 @@ import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.components.AppSearchBar
 import com.otlante.finances.ui.components.ListItem
 
+/**
+ * Composable function displaying the articles screen, which allows
+ * the user to view categories of articles with search functionality.
+ * Supports pull-to-refresh, loading indicators, and error handling
+ * via snackbar.
+ *
+ * @param snackBarHostState the [SnackbarHostState] used to show error messages and retry prompts
+ * @param repository the [ApiRepository] instance used to fetch data
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArticlesScreen(snackBarHostState: SnackbarHostState, repository: ApiRepository) {
@@ -32,28 +41,27 @@ fun ArticlesScreen(snackBarHostState: SnackbarHostState, repository: ApiReposito
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    uiState.error?.let { errorMessage ->
+        LaunchedEffect(uiState.error) {
+            val result = snackBarHostState.showSnackbar(
+                message = errorMessage.description,
+                actionLabel = "Retry"
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                viewModel.fetchArticles(initial = true)
+            }
+        }
+    }
+
     PullToRefreshBox(
         isRefreshing = uiState.isRefreshing,
         onRefresh = { viewModel.fetchArticles() },
+        modifier = Modifier.fillMaxSize()
     ) {
-        if (uiState.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        } else if (uiState.error != null) {
-            LaunchedEffect(uiState.error) {
-                uiState.error?.let { errorMessage ->
-                    val result = snackBarHostState.showSnackbar(
-                        message = errorMessage.description,
-                        actionLabel = "Retry"
-                    )
-                    if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.fetchArticles(initial = true)
-                    }
-                }
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
+        when {
+            uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            else -> LazyColumn(
+                modifier = Modifier.fillMaxSize()
             ) {
                 stickyHeader {
                     Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {

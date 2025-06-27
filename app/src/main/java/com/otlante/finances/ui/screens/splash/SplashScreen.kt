@@ -1,4 +1,4 @@
-package com.otlante.finances.ui.screens
+package com.otlante.finances.ui.screens.splash
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -17,8 +17,13 @@ import com.otlante.finances.R
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
+/**
+ * Splash screen composable that displays a Lottie animation while the app is loading.
+ *
+ * @param onReady Callback triggered when the Lottie composition is ready to be displayed.
+ * @param onAnimationFinished Callback triggered when the animation playback completes.
+ */
 @Composable
 fun SplashScreen(
     onReady: () -> Unit,
@@ -55,14 +60,5 @@ fun SplashScreen(
                 modifier = Modifier.fillMaxSize(0.5f)
             )
         }
-    }
-}
-
-class SplashViewModel : ViewModel() {
-    private val _isReady = MutableStateFlow(false)
-    val isReady: StateFlow<Boolean> = _isReady
-
-    fun markReady() {
-        _isReady.value = true
     }
 }

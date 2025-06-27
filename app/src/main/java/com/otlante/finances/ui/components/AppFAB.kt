@@ -9,6 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.otlante.finances.R
 
+/**
+ * Composable function that displays a Floating Action Button (FAB)
+ * with a plus icon, typically used for adding new items.
+ *
+ * @param onClick callback invoked when the FAB is clicked
+ */
 @Composable
 fun AppFAB(
     onClick: () -> Unit

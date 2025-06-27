@@ -6,6 +6,11 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.otlante.finances.R
 
+/**
+ * Sealed class representing the navigation destinations of the app.
+ *
+ * @property route the route string used for navigation
+ */
 sealed class NavDestination(val route: String) {
 
     data object Splash : NavDestination("splash")

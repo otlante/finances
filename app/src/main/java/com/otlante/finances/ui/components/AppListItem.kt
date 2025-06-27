@@ -31,15 +31,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.otlante.finances.R
 
-enum class ListItemType { BASIC, SUMMARIZE }
-
-fun isEmoji(content: String): Boolean {
-    val codePoints = content.codePoints().toArray()
-    return codePoints.all { codePoint ->
-        Character.getType(codePoint).toByte() == Character.OTHER_SYMBOL
-    }
-}
-
+/**
+ * Composable function that displays a customizable list item with optional
+ * emoji avatar, title, subtitle, trailing texts, icons, and switches.
+ *
+ * Supports two styles defined by [ListItemType]: BASIC and SUMMARIZE.
+ *
+ * @param modifier modifier to be applied to the root layout
+ * @param type style type of the list item, affecting layout and background
+ * @param emoji optional emoji string displayed as an avatar on the left
+ * @param title main text content of the list item
+ * @param subtitle optional secondary text below the title
+ * @param rightText optional text aligned to the right side
+ * @param rightComment optional smaller text below [rightText]
+ * @param showArrow whether to show a right arrow icon
+ * @param showTrailing whether to show a trailing icon different from arrow
+ * @param showSwitch whether to show a switch toggle on the right side
+ * @param onCheckedChange optional callback for switch toggle changes
+ * @param onClick optional click listener for the whole item
+ */
 @Composable
 fun ListItem(
     modifier: Modifier = Modifier,
@@ -80,61 +90,101 @@ fun ListItem(
     ) {
         Avatar(emoji, type)
 
+        BodyColumn(title, subtitle, Modifier.weight(1f))
+
+        RightInfoColumn(
+            rightText,
+            rightComment,
+            showArrow,
+            showTrailing,
+            showSwitch,
+            modifier = Modifier.weight(1f)
+        )
+
+        TrailingElement(showArrow, showTrailing, showSwitch, onCheckedChange)
+    }
+}
+
+@Composable
+private fun BodyColumn(
+    title: String,
+    subtitle: String?,
+    modifier: Modifier
+) {
+    Column(
+        modifier = modifier,
+    ) {
+        Text(
+            text = title,
+            style = typography.bodyLarge
+        )
+
+        subtitle?.let {
+            if (it.isNotEmpty()) {
+                Text(
+                    text = it,
+                    style = typography.bodyMedium
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun RightInfoColumn(
+    rightText: String?,
+    rightComment: String?,
+    showArrow: Boolean,
+    showTrailing: Boolean,
+    showSwitch: Boolean,
+    modifier: Modifier
+) {
+    rightText?.let {
         Column(
-            modifier = Modifier.weight(1f),
+            modifier = modifier,
         ) {
             Text(
-                text = title,
-                style = typography.bodyLarge
+                text = it,
+                style = typography.bodyLarge,
+                modifier = Modifier.align(Alignment.End)
             )
 
-            subtitle?.let {
-                if (it.isNotEmpty()) {
+            rightComment?.let { comment ->
+                if (comment.isNotEmpty()) {
                     Text(
-                        text = it,
-                        style = typography.bodyMedium
+                        text = comment,
+                        style = typography.bodyMedium,
+                        modifier = Modifier.align(Alignment.End)
                     )
                 }
             }
         }
-
-        rightText?.let {
-            Column(
-                modifier = Modifier.weight(1f),
-            ) {
-                Text(
-                    text = it,
-                    style = typography.bodyLarge,
-                    modifier = Modifier.align(Alignment.End)
-                )
-
-                rightComment?.let { comment ->
-                    if (comment.isNotEmpty()) {
-                        Text(
-                            text = comment,
-                            style = typography.bodyMedium,
-                            modifier = Modifier.align(Alignment.End)
-                        )
-                    }
-                }
-            }
-            if (showArrow || showTrailing || showSwitch) {
-                Spacer(modifier = Modifier.width(16.dp))
-            }
+        if (showArrow || showTrailing || showSwitch) {
+            Spacer(modifier = Modifier.width(16.dp))
         }
+    }
+}
 
-        if (showArrow) {
-            Icon(
-                painter = painterResource(R.drawable.ic_more),
-                contentDescription = stringResource(R.string.show_more),
-            )
-        } else if (showTrailing) {
-            Icon(
-                painter = painterResource(R.drawable.ic_trailing_element),
-                contentDescription = stringResource(R.string.show_more),
-            )
-        } else if (showSwitch) {
-            var checked by remember { mutableStateOf(true) }
+@Composable
+private fun TrailingElement(
+    showArrow: Boolean,
+    showTrailing: Boolean,
+    showSwitch: Boolean,
+    onCheckedChange: ((Boolean) -> Unit)?
+) {
+    when {
+        showArrow -> Icon(
+            painter = painterResource(R.drawable.ic_more),
+            contentDescription = stringResource(R.string.show_more),
+        )
+
+        showTrailing -> Icon(
+            painter = painterResource(R.drawable.ic_trailing_element),
+            contentDescription = stringResource(R.string.show_more),
+        )
+
+        showSwitch -> {
+            var checked by remember { mutableStateOf(false) }
             Switch(
                 checked = checked,
                 onCheckedChange = {
@@ -146,6 +196,13 @@ fun ListItem(
     }
 }
 
+/**
+ * Private Composable that displays an emoji avatar with
+ * a circular background whose color depends on [type].
+ *
+ * @param emoji the emoji string to display
+ * @param type the list item type to determine styling
+ */
 @Composable
 private fun Avatar(emoji: String?, type: ListItemType) {
     emoji?.let {
@@ -166,5 +223,23 @@ private fun Avatar(emoji: String?, type: ListItemType) {
             Text(text = it, fontSize = textSize)
         }
         Spacer(modifier = Modifier.width(16.dp))
+    }
+}
+
+/**
+ * Enum representing types of list items for styling and layout purposes.
+ */
+enum class ListItemType { BASIC, SUMMARIZE }
+
+/**
+ * Checks if the given [content] string consists only of emoji characters.
+ *
+ * @param content the string to check
+ * @return true if all characters in the string are emojis, false otherwise
+ */
+private fun isEmoji(content: String): Boolean {
+    val codePoints = content.codePoints().toArray()
+    return codePoints.all { codePoint ->
+        Character.getType(codePoint).toByte() == Character.OTHER_SYMBOL
     }
 }

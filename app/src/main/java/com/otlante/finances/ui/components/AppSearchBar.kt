@@ -16,6 +16,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 
+/**
+ * Composable function that displays a customizable search bar
+ * with a text input field, placeholder, and search icon.
+ *
+ * @param query the current text value of the search input
+ * @param onQueryChange callback invoked when the search text changes
+ * @param modifier optional [Modifier] for styling the root composable
+ * @param placeholder placeholder text shown when the input is empty
+ */
 @Composable
 fun AppSearchBar(
     query: String,
