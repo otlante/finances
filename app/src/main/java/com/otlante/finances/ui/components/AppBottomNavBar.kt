@@ -1,5 +1,6 @@
 package com.otlante.finances.ui.components
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -13,6 +14,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.otlante.finances.ui.nav.NavDestination
 
+/**
+ * Composable function that renders a bottom navigation bar
+ * with predefined destinations.
+ *
+ * Highlights the currently selected destination and handles
+ * navigation actions when items are clicked.
+ *
+ * @param navController the [NavHostController] managing app navigation state
+ */
 @Composable
 fun AppBottomNavBar(navController: NavHostController) {
     val destinations = listOf(
@@ -34,29 +44,38 @@ fun AppBottomNavBar(navController: NavHostController) {
                 currentRoute == destination.route
             }
 
-            NavigationBarItem(
-                label = { Text(text = stringResource(id = destination.label)) },
-                icon = {
-                    Icon(
-                        painterResource(destination.icon),
-                        contentDescription = stringResource(destination.label)
-                    )
-                },
-                selected = isSelected,
-                onClick = {
-                    if (isSelected) {
-                        navController.popBackStack(destination.route, inclusive = false)
-                    } else {
-                        navController.navigate(destination.route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                }
-            )
+            GetNavigationBarItem(destination, isSelected, navController)
         }
     }
+}
+
+@Composable
+private fun RowScope.GetNavigationBarItem(
+    destination: NavDestination.BottomNav,
+    isSelected: Boolean,
+    navController: NavHostController
+) {
+    NavigationBarItem(
+        label = { Text(text = stringResource(id = destination.label)) },
+        icon = {
+            Icon(
+                painterResource(destination.icon),
+                contentDescription = stringResource(destination.label)
+            )
+        },
+        selected = isSelected,
+        onClick = {
+            if (isSelected) {
+                navController.popBackStack(destination.route, inclusive = false)
+            } else {
+                navController.navigate(destination.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        }
+    )
 }

@@ -10,7 +10,15 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 
-
+/**
+ * Composable function that displays a modal date picker dialog,
+ * allowing the user to select a date or dismiss the dialog.
+ *
+ * @param selectedDate the initially selected date in milliseconds since epoch
+ * @param onDateSelected callback invoked with the newly selected date in milliseconds,
+ *        or null if no date is selected
+ * @param onDismiss callback invoked when the dialog is dismissed
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerModal(

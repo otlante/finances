@@ -16,5 +16,6 @@ val SurfaceContainer = Color(0xFFF3EDF7)
 val SurfaceContainerHigh = Color(0xFFD4FAE6)
 val OnSurface = Color(0xFF1D1B20)
 val OnSurfaceVariant = Color(0xFF49454F)
-
-
+val InverseSurface = Color(0xFFD4FAE6)
+val InverseOnSurface = Color(0xFF1D1B20)
+val InversePrimary = Color(0xFF2AE881)

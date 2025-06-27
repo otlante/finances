@@ -13,6 +13,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 
+/**
+ * Composable function that displays a centered top app bar with an optional
+ * navigation icon and customizable action buttons.
+ *
+ * @param title the text displayed as the title of the app bar
+ * @param navigationIconResId optional drawable resource ID for the navigation icon
+ * @param onNavigationClick optional callback invoked when the navigation icon is clicked
+ * @param actions optional composable lambda to define action icons/buttons in the app bar
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(

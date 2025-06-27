@@ -22,6 +22,14 @@ import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
 
+/**
+ * Composable function that displays the expenses screen, showing a list
+ * of expenses with total summary and pull-to-refresh support. Handles
+ * loading and error states using a [SnackbarHostState].
+ *
+ * @param snackBarHostState the [SnackbarHostState] to display error messages and retry actions
+ * @param repository the [ApiRepository] instance used to fetch transactions
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExpensesScreen(snackBarHostState: SnackbarHostState, repository: ApiRepository) {
@@ -31,45 +39,46 @@ fun ExpensesScreen(snackBarHostState: SnackbarHostState, repository: ApiReposito
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    uiState.error?.let { errorMessage ->
+        LaunchedEffect(uiState.error) {
+            val result = snackBarHostState.showSnackbar(
+                message = errorMessage.description,
+                actionLabel = "Retry"
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                viewModel.fetchExpenses(initial = true)
+            }
+        }
+    }
 
     PullToRefreshBox(
         isRefreshing = uiState.isRefreshing,
         onRefresh = { viewModel.fetchExpenses() },
+        modifier = Modifier.fillMaxSize()
     ) {
-        if (uiState.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        } else if (uiState.error != null) {
-            LaunchedEffect(uiState.error) {
-                uiState.error?.let { errorMessage ->
-                    val result = snackBarHostState.showSnackbar(
-                        message = errorMessage.description,
-                        actionLabel = "Retry"
-                    )
-                    if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.fetchExpenses(initial = true)
+        when {
+            uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            else -> {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    stickyHeader {
+                        ListItem(
+                            type = ListItemType.SUMMARIZE,
+                            title = stringResource(R.string.total),
+                            rightText = uiState.totalAmount,
+                        )
+                        HorizontalDivider()
                     }
-                }
-            }
-        } else {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                stickyHeader {
-                    ListItem(
-                        type = ListItemType.SUMMARIZE,
-                        title = stringResource(R.string.total),
-                        rightText = uiState.totalAmount,
-                    )
-                    HorizontalDivider()
-                }
-                items(items = uiState.transactions, key = { item -> item.id }) { transaction ->
-                    ListItem(
-                        emoji = transaction.category.emoji,
-                        title = transaction.category.name,
-                        subtitle = transaction.comment,
-                        rightText = transaction.amount,
-                        showArrow = true,
-                        onClick = { }
-                    )
-                    HorizontalDivider()
+                    items(items = uiState.transactions, key = { item -> item.id }) { transaction ->
+                        ListItem(
+                            emoji = transaction.category.emoji,
+                            title = transaction.category.name,
+                            subtitle = transaction.comment,
+                            rightText = transaction.amount,
+                            showArrow = true,
+                            onClick = { }
+                        )
+                        HorizontalDivider()
+                    }
                 }
             }
         }

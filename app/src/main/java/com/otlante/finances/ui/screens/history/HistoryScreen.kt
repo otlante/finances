@@ -19,17 +19,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
+import com.otlante.finances.ui.utils.Formatter
 import com.otlante.finances.domain.entity.Transaction
 import com.otlante.finances.domain.repository.ApiRepository
-import com.otlante.finances.formatDate
-import com.otlante.finances.formatHeaderDate
-import com.otlante.finances.formatTransactionDate
 import com.otlante.finances.ui.components.DatePickerModal
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
 import java.time.LocalDate
 import java.time.ZoneId
 
+/**
+ * Screen composable displaying the user's transaction history filtered by date range.
+ * Shows a header with start/end dates and total sum, a list of transactions,
+ * handles loading and error states with a snackbar, and displays a date picker dialog.
+ *
+ * @param snackBarHostState the SnackbarHostState to show messages
+ * @param repository the repository to fetch transaction data
+ * @param navBackStackEntry the NavBackStackEntry for saved state handle
+ */
 @Composable
 fun HistoryScreen(
     snackBarHostState: SnackbarHostState,
@@ -42,7 +49,20 @@ fun HistoryScreen(
             savedStateHandle = navBackStackEntry.savedStateHandle
         )
     )
+
     val uiState by viewModel.uiState.collectAsState()
+
+    uiState.error?.let { errorMessage ->
+        LaunchedEffect(uiState.error) {
+            val result = snackBarHostState.showSnackbar(
+                message = errorMessage.description,
+                actionLabel = "Retry"
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                viewModel.fetchHistory(initial = true)
+            }
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         HistoryHeader(
@@ -55,22 +75,7 @@ fun HistoryScreen(
 
         Box(modifier = Modifier.fillMaxSize()) {
             when {
-                uiState.isLoading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-
-                uiState.error != null -> {
-                    val error = uiState.error
-                    LaunchedEffect(error) {
-                        val result = snackBarHostState.showSnackbar(
-                            message = error?.description.orEmpty(),
-                            actionLabel = "Повтор"
-                        )
-                        if (result == SnackbarResult.ActionPerformed) {
-                            viewModel.fetchHistory(initial = true)
-                        }
-                    }
-                }
+                uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
 
                 else -> HistoryList(uiState.transactions)
             }
@@ -103,14 +108,14 @@ private fun HistoryHeader(
         ListItem(
             title = "Начало",
             type = ListItemType.SUMMARIZE,
-            rightText = formatHeaderDate(startDate),
+            rightText = Formatter.formatHeaderDate(startDate),
             onClick = onStartDateClick
         )
         HorizontalDivider()
         ListItem(
             title = "Конец",
             type = ListItemType.SUMMARIZE,
-            rightText = formatHeaderDate(endDate),
+            rightText = Formatter.formatHeaderDate(endDate),
             onClick = onEndDateClick
         )
         HorizontalDivider()
@@ -135,7 +140,7 @@ private fun HistoryList(transactions: List<Transaction>) {
                 title = transaction.category.name,
                 subtitle = transaction.comment,
                 rightText = transaction.amount,
-                rightComment = formatTransactionDate(formatDate(transaction.transactionDate)),
+                rightComment = Formatter.formatTransactionDate(Formatter.formatDate(transaction.transactionDate)),
                 showArrow = true,
                 onClick = { }
             )

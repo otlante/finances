@@ -8,13 +8,22 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.otlante.finances.MyApplication
-import com.otlante.finances.ui.screens.SettingsScreen
+import com.otlante.finances.ui.screens.settings.SettingsScreen
 import com.otlante.finances.ui.screens.account.AccountScreen
 import com.otlante.finances.ui.screens.articles.ArticlesScreen
 import com.otlante.finances.ui.screens.expenses.ExpensesScreen
 import com.otlante.finances.ui.screens.history.HistoryScreen
 import com.otlante.finances.ui.screens.income.IncomeScreen
 
+/**
+ * Composable function that defines the navigation graph for the app.
+ *
+ * Configures available destinations and binds each route to its corresponding
+ * screen composable.
+ *
+ * @param navController the [NavHostController] managing app navigation
+ * @param snackBarHostState the [SnackbarHostState] used to show snackbars across screens
+ */
 @Composable
 fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHostState) {
 

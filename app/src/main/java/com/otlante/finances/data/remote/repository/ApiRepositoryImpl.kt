@@ -1,9 +1,9 @@
-package com.otlante.finances.network.repository
+package com.otlante.finances.data.remote.repository
 
-import com.otlante.finances.network.ApiService
-import com.otlante.finances.network.NetworkError
-import com.otlante.finances.network.ResultState
-import com.otlante.finances.network.NoConnectionException
+import com.otlante.finances.data.remote.ApiService
+import com.otlante.finances.data.remote.NetworkError
+import com.otlante.finances.data.remote.ResultState
+import com.otlante.finances.data.remote.NoConnectionException
 import com.otlante.finances.domain.entity.Account
 import com.otlante.finances.domain.entity.Category
 import com.otlante.finances.domain.entity.Transaction
@@ -20,8 +20,12 @@ class ApiRepositoryImpl(
     private suspend fun resolveCurrentAccountId(): Int {
         val accounts = api.getAccounts()
         val firstAccountId = accounts.firstOrNull()?.id
-            ?: throw IllegalStateException("No accounts found for the user.")
+        check(firstAccountId != null) { "No accounts found for the user." }
         return firstAccountId
+    }
+
+    companion object {
+        private const val SERVER_ERROR_START_CODE = 500
     }
 
     override suspend fun getHistory(
@@ -76,24 +80,26 @@ class ApiRepositoryImpl(
         return getHistory(startOfMonth.format(formatter), today.format(formatter))
     }
 
-    private suspend inline fun <T> safeNetworkCall(crossinline apiCall: suspend () -> T): ResultState<T> {
-        return withContext(Dispatchers.IO) {
+    private suspend inline fun <T> safeNetworkCall(crossinline apiCall: suspend () -> T): ResultState<T> =
+        withContext(Dispatchers.IO) {
             try {
                 ResultState.Success(apiCall.invoke())
             } catch (e: Exception) {
-                when (e) {
-                    is NoConnectionException -> ResultState.Error(NetworkError.NoInternetError)
-                    is HttpException -> {
-                        if (e.code() >= 500) {
-                            ResultState.Error(NetworkError.ServerError)
-                        } else {
-                            ResultState.Error(NetworkError.UnknownError(e))
-                        }
-                    }
-
-                    else -> ResultState.Error(NetworkError.UnknownError(e))
-                }
+                ResultState.Error(mapToNetworkError(e))
             }
         }
+
+
+    private fun mapToNetworkError(e: Exception): NetworkError = when (e) {
+        is NoConnectionException -> NetworkError.NoInternetError
+        is HttpException -> {
+            if (e.code() >= SERVER_ERROR_START_CODE) {
+                NetworkError.ServerError
+            } else {
+                NetworkError.UnknownError(e)
+            }
+        }
+
+        else -> NetworkError.UnknownError(e)
     }
 }
