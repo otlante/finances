@@ -28,7 +28,7 @@ fun AppBottomNavBar(navController: NavHostController) {
     val destinations = listOf(
         NavDestination.BottomNav.Expenses,
         NavDestination.BottomNav.Incomes,
-        NavDestination.BottomNav.Check,
+        NavDestination.BottomNav.Account,
         NavDestination.BottomNav.Articles,
         NavDestination.BottomNav.Settings
     )
@@ -40,6 +40,8 @@ fun AppBottomNavBar(navController: NavHostController) {
         destinations.forEach { destination ->
             val isSelected = if (currentRoute == NavDestination.History.routeWithArgument) {
                 navBackStackEntry?.arguments?.getString(NavDestination.History.PARENT_ROUTE_ARG) == destination.route
+            } else if (currentRoute == NavDestination.EditAccount.route) {
+                destination.route == NavDestination.BottomNav.Account.route
             } else {
                 currentRoute == destination.route
             }

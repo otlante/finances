@@ -20,4 +20,6 @@
     <string name="currency">Валюта</string>
     <string name="find_article">Найти статью</string>
     <string name="show_more">Подробнее</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="account_name">Название</string>
 </resources>
