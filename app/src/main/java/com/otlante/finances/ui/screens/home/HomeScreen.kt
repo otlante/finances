@@ -1,5 +1,6 @@
 package com.otlante.finances.ui.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -14,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -23,6 +25,7 @@ import com.otlante.finances.ui.components.AppFAB
 import com.otlante.finances.ui.components.AppTopBar
 import com.otlante.finances.ui.nav.AppNavGraph
 import com.otlante.finances.ui.nav.NavDestination
+import com.otlante.finances.ui.screens.editAccount.EditAccountCallbacksHolder
 
 /**
  * Root composable for the home screen containing scaffold layout with top bar, bottom navigation,
@@ -40,7 +43,7 @@ fun HomeScreen() {
     val routesWithFab = setOf(
         NavDestination.BottomNav.Expenses.route,
         NavDestination.BottomNav.Incomes.route,
-        NavDestination.BottomNav.Check.route
+        NavDestination.BottomNav.Account.route
     )
 
     Scaffold(
@@ -57,8 +60,7 @@ fun HomeScreen() {
         }
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .padding(paddingValues)
+            modifier = Modifier.padding(paddingValues)
         ) {
             AppNavGraph(navController, snackBarHostState)
         }
@@ -112,10 +114,14 @@ private fun getTopBarForRoute(
             }
         )
 
-        NavDestination.BottomNav.Check.route -> AppTopBar(
+        NavDestination.BottomNav.Account.route -> AppTopBar(
             title = stringResource(R.string.account_top_bar_title),
             actions = {
-                IconButton(onClick = { }) {
+                IconButton(onClick = {
+                    navController.navigate(
+                        NavDestination.EditAccount.route
+                    )
+                }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_edit),
                         contentDescription = stringResource(R.string.account_top_bar_action_description),
@@ -139,6 +145,25 @@ private fun getTopBarForRoute(
                     Icon(
                         painterResource(R.drawable.ic_history_timer),
                         contentDescription = "Анализ истории",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        )
+
+        NavDestination.EditAccount.route -> AppTopBar(
+            title = "Редактировать аккаунт",
+            navigationIconResId = R.drawable.ic_cross,
+            onNavigationClick = {
+                EditAccountCallbacksHolder.onCancel?.invoke()
+            },
+            actions = {
+                IconButton(onClick = {
+                    EditAccountCallbacksHolder.onConfirm?.invoke()
+                }) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_confirm),
+                        contentDescription = "Подтвердить",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }

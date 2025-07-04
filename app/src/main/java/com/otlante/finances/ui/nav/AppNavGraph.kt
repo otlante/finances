@@ -1,5 +1,7 @@
 package com.otlante.finances.ui.nav
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,6 +13,7 @@ import com.otlante.finances.MyApplication
 import com.otlante.finances.ui.screens.settings.SettingsScreen
 import com.otlante.finances.ui.screens.account.AccountScreen
 import com.otlante.finances.ui.screens.articles.ArticlesScreen
+import com.otlante.finances.ui.screens.editAccount.EditAccountScreen
 import com.otlante.finances.ui.screens.expenses.ExpensesScreen
 import com.otlante.finances.ui.screens.history.HistoryScreen
 import com.otlante.finances.ui.screens.income.IncomeScreen
@@ -34,6 +37,10 @@ fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHos
     NavHost(
         navController = navController,
         startDestination = NavDestination.BottomNav.Expenses.route,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None },
         modifier = Modifier
     ) {
         composable(route = NavDestination.BottomNav.Expenses.route) {
@@ -42,7 +49,7 @@ fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHos
         composable(route = NavDestination.BottomNav.Incomes.route) {
             IncomeScreen(snackBarHostState = snackBarHostState, repository = repository)
         }
-        composable(route = NavDestination.BottomNav.Check.route) {
+        composable(route = NavDestination.BottomNav.Account.route) {
             AccountScreen(snackBarHostState = snackBarHostState, repository = repository)
         }
         composable(route = NavDestination.BottomNav.Articles.route) {
@@ -51,7 +58,6 @@ fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHos
         composable(route = NavDestination.BottomNav.Settings.route) {
             SettingsScreen()
         }
-
         composable(
             route = NavDestination.History.routeWithArgument,
             arguments = NavDestination.History.arguments
@@ -60,6 +66,13 @@ fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHos
                 snackBarHostState = snackBarHostState,
                 navBackStackEntry = it,
                 repository = application.repository
+            )
+        }
+        composable(route = NavDestination.EditAccount.route) {
+            EditAccountScreen(
+                snackBarHostState = snackBarHostState,
+                repository = repository,
+                navController = navController
             )
         }
     }

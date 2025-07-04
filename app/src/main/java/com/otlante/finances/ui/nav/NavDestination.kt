@@ -17,6 +17,8 @@ sealed class NavDestination(val route: String) {
 
     data object Main : NavDestination("main")
 
+    data object EditAccount : NavDestination("editAccount")
+
     data object History : NavDestination("history/{parentRoute}") {
         const val PARENT_ROUTE_ARG = "parentRoute"
         val routeWithArgument = "history/{$PARENT_ROUTE_ARG}"
@@ -45,7 +47,7 @@ sealed class NavDestination(val route: String) {
             label = R.string.bottom_nav_incomes
         )
 
-        data object Check : BottomNav(
+        data object Account : BottomNav(
             route = "check",
             icon = R.drawable.ic_check,
             label = R.string.bottom_nav_check
