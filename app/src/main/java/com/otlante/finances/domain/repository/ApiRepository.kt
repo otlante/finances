@@ -50,4 +50,10 @@ interface ApiRepository {
         startDate: String,
         endDate: String
     ): ResultState<List<Transaction>>
+
+    suspend fun updateAccount(
+        name: String,
+        balance: String,
+        currency: String,
+    ): ResultState<Account>
 }

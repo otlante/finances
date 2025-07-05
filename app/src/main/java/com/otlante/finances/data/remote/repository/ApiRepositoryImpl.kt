@@ -2,11 +2,12 @@ package com.otlante.finances.data.remote.repository
 
 import com.otlante.finances.data.remote.ApiService
 import com.otlante.finances.data.remote.NetworkError
-import com.otlante.finances.data.remote.ResultState
 import com.otlante.finances.data.remote.NoConnectionException
+import com.otlante.finances.data.remote.ResultState
 import com.otlante.finances.domain.entity.Account
 import com.otlante.finances.domain.entity.Category
 import com.otlante.finances.domain.entity.Transaction
+import com.otlante.finances.domain.entity.UpdateAccountRequest
 import com.otlante.finances.domain.repository.ApiRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -35,6 +36,18 @@ class ApiRepositoryImpl(
         return safeNetworkCall {
             val accountId = resolveCurrentAccountId()
             api.getTransactionsForPeriod(accountId, startDate, endDate)
+        }
+    }
+
+    override suspend fun updateAccount(
+        name: String,
+        balance: String,
+        currency: String
+    ): ResultState<Account> {
+        return safeNetworkCall {
+            val accountId = resolveCurrentAccountId()
+            val request = UpdateAccountRequest(name, balance, currency)
+            api.updateAccount(accountId, request)
         }
     }
 
