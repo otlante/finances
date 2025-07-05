@@ -11,6 +11,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +22,7 @@ import com.otlante.finances.R
 import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
+import com.otlante.finances.ui.utils.Formatter
 
 /**
  * Composable screen displaying a list of income transactions with a total amount summary.
@@ -40,6 +42,7 @@ fun IncomeScreen(snackBarHostState: SnackbarHostState, repository: ApiRepository
     )
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val account by viewModel.accountFlow.collectAsState()
 
     uiState.error?.let { errorMessage ->
         LaunchedEffect(uiState.error) {
@@ -65,7 +68,11 @@ fun IncomeScreen(snackBarHostState: SnackbarHostState, repository: ApiRepository
                     ListItem(
                         type = ListItemType.SUMMARIZE,
                         title = stringResource(R.string.total),
-                        rightText = uiState.totalAmount,
+                        rightText = "${uiState.totalAmount} ${
+                            Formatter.getCurrencySymbol(
+                                account?.currency
+                            )
+                        }",
                     )
                     HorizontalDivider()
                 }
@@ -74,7 +81,11 @@ fun IncomeScreen(snackBarHostState: SnackbarHostState, repository: ApiRepository
                         emoji = transaction.category.emoji,
                         title = transaction.category.name,
                         subtitle = transaction.comment,
-                        rightText = transaction.amount,
+                        rightText = "${transaction.amount} ${
+                            Formatter.getCurrencySymbol(
+                                account?.currency
+                            )
+                        }",
                         showArrow = true,
                         onClick = { }
                     )

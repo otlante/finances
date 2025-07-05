@@ -37,6 +37,7 @@ class AccountViewModel(
     private val repository: ApiRepository
 ) : ViewModel() {
 
+    val accountFlow = repository.accountFlow
     private val _uiState = MutableStateFlow(AccountUiState())
     val uiState: StateFlow<AccountUiState> = _uiState
 

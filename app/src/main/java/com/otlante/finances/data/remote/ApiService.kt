@@ -3,7 +3,10 @@ package com.otlante.finances.data.remote
 import com.otlante.finances.domain.entity.Account
 import com.otlante.finances.domain.entity.Category
 import com.otlante.finances.domain.entity.Transaction
+import com.otlante.finances.domain.entity.UpdateAccountRequest
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -27,4 +30,10 @@ interface ApiService {
 
     @GET("categories")
     suspend fun getAllCategories(): List<Category>
+
+    @PUT("accounts/{id}")
+    suspend fun updateAccount(
+        @Path("id") id: Int,
+        @Body request: UpdateAccountRequest
+    ): Account
 }

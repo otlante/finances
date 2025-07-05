@@ -1,19 +1,27 @@
 package com.otlante.finances.ui.screens.editAccount
 
-import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -21,11 +29,10 @@ import com.otlante.finances.R
 import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
-import com.otlante.finances.ui.screens.account.AccountUiState
-import com.otlante.finances.ui.screens.account.AccountViewModel
-import com.otlante.finances.ui.screens.account.AccountViewModelFactory
+import com.otlante.finances.ui.utils.Formatter
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditAccountScreen(
     snackBarHostState: SnackbarHostState,
@@ -52,20 +59,96 @@ fun EditAccountScreen(
 
     LaunchedEffect(Unit) {
         EditAccountCallbacksHolder.onConfirm = {
-            Log.i("TAG", "EditAccountScreen: ABOBA1")
-            navController.popBackStack()
+            viewModel.saveChanges()
         }
         EditAccountCallbacksHolder.onCancel = {
-            Log.i("TAG", "EditAccountScreen: ABOBA2")
-            navController.popBackStack()
+            viewModel.cancelChanges()
         }
     }
 
-    EditAccountScreenContent(uiState)
+    MainContent(uiState, viewModel)
+
+    Dialogs(uiState, viewModel)
+
+    if (uiState.isReadyToLeft) {
+        navController.popBackStack()
+    }
+
+    if (uiState.isLoading) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        }
+    }
 }
 
 @Composable
-fun EditAccountScreenContent(uiState: EditAccountUiState) {
+@OptIn(ExperimentalMaterial3Api::class)
+private fun Dialogs(
+    uiState: EditAccountUiState,
+    viewModel: EditAccountViewModel,
+) {
+    if (uiState.isNameDialogVisible) {
+        AlertDialog(
+            onDismissRequest = { viewModel.dismissNameEdit() },
+            title = { Text("Редактировать имя") },
+            text = {
+                TextField(
+                    value = uiState.editedName ?: "",
+                    onValueChange = viewModel::onNameChanged,
+                    singleLine = true
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { viewModel.confirmNameEdit() }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
+
+    if (uiState.isBalanceDialogVisible) {
+        AlertDialog(
+            onDismissRequest = { viewModel.dismissBalanceEdit() },
+            title = { Text("Редактировать баланс") },
+            text = {
+                TextField(
+                    value = uiState.editedBalance ?: "",
+                    onValueChange = viewModel::onBalanceChanged,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { viewModel.confirmBalanceEdit() }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
+
+    val sheetState = rememberModalBottomSheetState()
+    if (uiState.isCurrencySheetVisible) {
+        ModalBottomSheet(
+            onDismissRequest = { viewModel.dismissCurrencyEdit() },
+            sheetState = sheetState
+        ) {
+            Formatter.Currency.entries.toTypedArray().forEach { currency ->
+                ListItem(
+                    emoji = currency.symbol,
+                    title = currency.description,
+                    onClick = { viewModel.onCurrencySelected(currency.toString()) }
+                )
+                HorizontalDivider()
+            }
+        }
+    }
+}
+
+@Composable
+private fun MainContent(
+    uiState: EditAccountUiState,
+    viewModel: EditAccountViewModel
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -76,7 +159,7 @@ fun EditAccountScreenContent(uiState: EditAccountUiState) {
             title = stringResource(R.string.account_name),
             showArrow = true,
             rightText = uiState.account?.name,
-            onClick = { }
+            onClick = { viewModel.onNameClick() }
         )
 
         HorizontalDivider()
@@ -86,8 +169,8 @@ fun EditAccountScreenContent(uiState: EditAccountUiState) {
             emoji = "\uD83D\uDCB0",
             title = stringResource(R.string.balance),
             showArrow = true,
-            rightText = uiState.account?.balance,
-            onClick = { }
+            rightText = "${uiState.account?.balance ?: ""} ${Formatter.getCurrencySymbol(uiState.editedCurrency)}",
+            onClick = { viewModel.onBalanceClick() }
         )
 
         HorizontalDivider()
@@ -97,7 +180,7 @@ fun EditAccountScreenContent(uiState: EditAccountUiState) {
             title = stringResource(R.string.currency),
             showArrow = true,
             rightText = uiState.account?.currency,
-            onClick = { }
+            onClick = { viewModel.onCurrencyClick() }
         )
 
         HorizontalDivider()

@@ -59,6 +59,7 @@ class HistoryViewModel(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    val accountFlow = repository.accountFlow
     private val _uiState = MutableStateFlow(HistoryUiState())
     val uiState: StateFlow<HistoryUiState> = _uiState
 
