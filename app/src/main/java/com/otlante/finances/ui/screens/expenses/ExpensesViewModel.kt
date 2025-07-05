@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
  */
 data class ExpensesUiState(
     val transactions: List<Transaction> = emptyList(),
-    val totalAmount: String = "0 ₽",
+    val totalAmount: String = "0",
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val error: NetworkError? = null
@@ -39,6 +39,7 @@ class ExpensesViewModel(
     private val repository: ApiRepository
 ) : ViewModel() {
 
+    val accountFlow = repository.accountFlow
     private val _uiState = MutableStateFlow(ExpensesUiState())
     val uiState: StateFlow<ExpensesUiState> = _uiState
 

@@ -10,6 +10,8 @@ import com.otlante.finances.domain.entity.Transaction
 import com.otlante.finances.domain.entity.UpdateAccountRequest
 import com.otlante.finances.domain.repository.ApiRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.time.LocalDate
@@ -18,6 +20,9 @@ import java.time.format.DateTimeFormatter
 class ApiRepositoryImpl(
     private val api: ApiService
 ) : ApiRepository {
+    private val _accountFlow = MutableStateFlow<Account?>(null)
+    override val accountFlow: StateFlow<Account?> get() = _accountFlow
+
     private suspend fun resolveCurrentAccountId(): Int {
         val accounts = api.getAccounts()
         val firstAccountId = accounts.firstOrNull()?.id
@@ -47,7 +52,9 @@ class ApiRepositoryImpl(
         return safeNetworkCall {
             val accountId = resolveCurrentAccountId()
             val request = UpdateAccountRequest(name, balance, currency)
-            api.updateAccount(accountId, request)
+            val res = api.updateAccount(accountId, request)
+            _accountFlow.value = res
+            res
         }
     }
 
@@ -55,6 +62,9 @@ class ApiRepositoryImpl(
         return when (val result = getHistoryForCurrentMonth()) {
             is ResultState.Success -> {
                 val expenses = result.data.filter { !it.category.isIncome }
+                if (expenses.isNotEmpty()) {
+                    _accountFlow.value = expenses[0].account
+                }
                 ResultState.Success(expenses)
             }
 
@@ -66,6 +76,9 @@ class ApiRepositoryImpl(
         return when (val result = getHistoryForCurrentMonth()) {
             is ResultState.Success -> {
                 val incomes = result.data.filter { it.category.isIncome }
+                if (incomes.isNotEmpty()) {
+                    _accountFlow.value = incomes[0].account
+                }
                 ResultState.Success(incomes)
             }
 
@@ -76,7 +89,9 @@ class ApiRepositoryImpl(
     override suspend fun getMainAccount(): ResultState<Account> {
         return safeNetworkCall {
             val accountId = resolveCurrentAccountId()
-            api.getAccountById(accountId)
+            val res = api.getAccountById(accountId)
+            _accountFlow.value = res
+            res
         }
     }
 
