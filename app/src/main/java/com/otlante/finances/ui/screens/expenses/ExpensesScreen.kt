@@ -11,6 +11,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ import com.otlante.finances.di.LocalViewModelFactory
 import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
+import com.otlante.finances.ui.utils.Formatter
 import com.otlante.finances.ui.screens.account.AccountViewModel
 
 /**
@@ -30,6 +32,7 @@ import com.otlante.finances.ui.screens.account.AccountViewModel
  * loading and error states using a [SnackbarHostState].
  *
  * @param snackBarHostState the [SnackbarHostState] to display error messages and retry actions
+ * @param repository the [ApiRepository] instance used to fetch transactions
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,6 +42,7 @@ fun ExpensesScreen(snackBarHostState: SnackbarHostState) {
     val viewModel: ExpensesViewModel = viewModel(factory = factory)
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val account by viewModel.accountFlow.collectAsState()
 
     uiState.error?.let { errorMessage ->
         LaunchedEffect(uiState.error) {
@@ -65,7 +69,11 @@ fun ExpensesScreen(snackBarHostState: SnackbarHostState) {
                         ListItem(
                             type = ListItemType.SUMMARIZE,
                             title = stringResource(R.string.total),
-                            rightText = uiState.totalAmount,
+                            rightText = "${uiState.totalAmount} ${
+                                Formatter.getCurrencySymbol(
+                                    account?.currency
+                                )
+                            }",
                         )
                         HorizontalDivider()
                     }
@@ -74,7 +82,11 @@ fun ExpensesScreen(snackBarHostState: SnackbarHostState) {
                             emoji = transaction.category.emoji,
                             title = transaction.category.name,
                             subtitle = transaction.comment,
-                            rightText = transaction.amount,
+                            rightText = "${transaction.amount} ${
+                                Formatter.getCurrencySymbol(
+                                    account?.currency
+                                )
+                            }",
                             showArrow = true,
                             onClick = { }
                         )

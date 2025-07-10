@@ -1,8 +1,6 @@
 package com.otlante.finances.ui.screens.editAccount
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.otlante.finances.ui.utils.Formatter
 import com.otlante.finances.data.remote.NetworkError
@@ -25,8 +23,17 @@ import javax.inject.Inject
 data class EditAccountUiState(
     val account: Account? = null,
     val isLoading: Boolean = false,
+    val isReadyToLeft: Boolean = false,
     val isRefreshing: Boolean = false,
-    val error: NetworkError? = null
+    val error: NetworkError? = null,
+
+    val editedName: String? = null,
+    val editedBalance: String? = null,
+    val editedCurrency: String? = null,
+
+    val isNameDialogVisible: Boolean = false,
+    val isBalanceDialogVisible: Boolean = false,
+    val isCurrencySheetVisible: Boolean = false
 )
 
 /**
@@ -63,13 +70,18 @@ class EditAccountViewModel @Inject constructor(
     }
 
     private fun fetchAccountSuccess(account: Account) {
+        val formattedBalance = Formatter.formatAmount(
+            account.balance
+        )
         _uiState.update {
-            Log.i("TAG", "fetchAccountSuccess: $account")
             it.copy(
-                account = account.copy(balance = Formatter.formatAmount(account.balance)),
+                account = account.copy(balance = formattedBalance),
                 isLoading = false,
                 isRefreshing = false,
-                error = null
+                error = null,
+                editedName = account.name,
+                editedBalance = formattedBalance,
+                editedCurrency = account.currency
             )
         }
     }
@@ -93,22 +105,125 @@ class EditAccountViewModel @Inject constructor(
             )
         }
     }
-}
 
-/**
- * Factory for creating [AccountViewModel] with the required [ApiRepository] dependency.
- *
- * @property repository the [ApiRepository] passed to the ViewModel
- */
-class EditAccountViewModelFactory(
-    private val repository: ApiRepository
-) : ViewModelProvider.Factory {
+    fun onNameClick() {
+        _uiState.update { it.copy(isNameDialogVisible = true) }
+    }
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(EditAccountViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return EditAccountViewModel(repository) as T
+    fun onBalanceClick() {
+        _uiState.update { it.copy(isBalanceDialogVisible = true) }
+    }
+
+    fun onCurrencyClick() {
+        _uiState.update { it.copy(isCurrencySheetVisible = true) }
+    }
+
+    fun onNameChanged(newName: String) {
+        _uiState.update { it.copy(editedName = newName) }
+    }
+
+    fun confirmNameEdit() {
+        _uiState.update {
+            it.copy(
+                account = it.account?.copy(name = it.editedName ?: it.account.name),
+                editedName = it.account?.name,
+                isNameDialogVisible = false
+            )
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+
+    fun dismissNameEdit() {
+        _uiState.update {
+            it.copy(
+                editedName = it.account?.name,
+                isNameDialogVisible = false
+            )
+        }
+    }
+
+    fun onBalanceChanged(newBalance: String) {
+        _uiState.update { it.copy(editedBalance = newBalance) }
+    }
+
+    fun confirmBalanceEdit() {
+        val currentBalance = uiState.value.editedBalance
+        val rounded = currentBalance?.replace(",", ".")?.toDoubleOrNull()?.let {
+            Formatter.formatAmount(it)
+        }
+        if (rounded != null) {
+            _uiState.update {
+                it.copy(
+                    account = it.account?.copy(balance = rounded),
+                    editedBalance = rounded,
+                    isBalanceDialogVisible = false
+                )
+            }
+        } else {
+            _uiState.update {
+                it.copy(
+                    editedBalance = it.account?.balance,
+                    isBalanceDialogVisible = false
+                )
+            }
+        }
+    }
+
+    fun dismissBalanceEdit() {
+        _uiState.update {
+            it.copy(
+                editedBalance = it.account?.balance,
+                isBalanceDialogVisible = false
+            )
+        }
+    }
+
+    fun onCurrencySelected(newCurrency: String) {
+        _uiState.update {
+            it.copy(
+                account = it.account?.copy(currency = newCurrency),
+                editedCurrency = newCurrency,
+                isCurrencySheetVisible = false
+            )
+        }
+    }
+
+    fun dismissCurrencyEdit() {
+        _uiState.update {
+            it.copy(
+                editedCurrency = it.account?.currency,
+                isCurrencySheetVisible = false
+            )
+        }
+    }
+
+    fun cancelChanges() {
+        _uiState.update { state ->
+            state.copy(
+                isReadyToLeft = true,
+                isNameDialogVisible = false,
+                isBalanceDialogVisible = false,
+                isCurrencySheetVisible = false
+            )
+        }
+    }
+
+    fun saveChanges() {
+        val name = uiState.value.account?.name ?: return
+        val balance = uiState.value.account?.balance?.replace(",", ".") ?: return
+        val currency = uiState.value.account?.currency ?: return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            repository.updateAccount(name, balance, currency).fold(
+                onSuccess = { account ->
+                    _uiState.update {
+                        it.copy(isLoading = false, isReadyToLeft = true)
+                    }
+                },
+                onError = { error ->
+                    fetchAccountError(error)
+                }
+            )
+        }
     }
 }

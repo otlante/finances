@@ -1,9 +1,7 @@
 package com.otlante.finances.ui.screens.history
 
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.otlante.finances.ui.utils.Formatter
 import com.otlante.finances.data.remote.NetworkError
@@ -68,6 +66,7 @@ class HistoryViewModel @AssistedInject constructor(
         fun create(savedStateHandle: SavedStateHandle): HistoryViewModel
     }
 
+    val accountFlow = repository.accountFlow
     private val _uiState = MutableStateFlow(HistoryUiState())
     val uiState: StateFlow<HistoryUiState> = _uiState
 
@@ -180,38 +179,3 @@ class HistoryViewModel @AssistedInject constructor(
     }
 }
 
-/**
- * Factory for creating [HistoryViewModel] instances with parameters.
- *
- * @property repository Repository for data access.
- * @property savedStateHandle Saved state handle for navigation arguments.
- */
-
-//class HistoryViewModelFactory @Inject constructor(
-//    private val repository: ApiRepository,
-//    owner: SavedStateRegistryOwner,
-//    defaultArgs: Bundle? = null
-//) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
-//
-//    @Suppress("UNCHECKED_CAST")
-//    override fun <T : ViewModel> create(
-//        key: String,
-//        modelClass: Class<T>,
-//        handle: SavedStateHandle
-//    ): T {
-//        return HistoryViewModel(repository, handle) as T
-//    }
-//}
-//class HistoryViewModelFactory(
-//    private val repository: ApiRepository,
-//    private val savedStateHandle: SavedStateHandle
-//) : ViewModelProvider.Factory {
-//
-//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//        if (modelClass.isAssignableFrom(HistoryViewModel::class.java)) {
-//            @Suppress("UNCHECKED_CAST")
-//            return HistoryViewModel(repository, savedStateHandle) as T
-//        }
-//        throw IllegalArgumentException("Unknown ViewModel class")
-//    }
-//}

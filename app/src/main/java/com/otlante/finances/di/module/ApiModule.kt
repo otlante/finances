@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 @Module
 object ApiModule {
@@ -19,6 +20,7 @@ object ApiModule {
     private const val BASE_URL = "https://shmr-finance.ru/api/v1/"
 
     @Provides
+    @Singleton
     fun provideOkHttpClient(context: Context): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(NetworkConnectionInterceptor(context.applicationContext))
@@ -30,6 +32,7 @@ object ApiModule {
     }
 
     @Provides
+    @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -39,6 +42,7 @@ object ApiModule {
     }
 
     @Provides
+    @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }

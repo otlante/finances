@@ -1,32 +1,39 @@
 package com.otlante.finances.ui.utils
 
-import android.icu.text.DecimalFormat
-import android.icu.text.DecimalFormatSymbols
+import com.otlante.finances.ui.utils.Formatter.Currency.RUB
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.Month
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 
 object Formatter {
+
+    enum class Currency(val symbol: String, val description: String) {
+        RUB("₽", "Российский рубль"),
+        USD("$", "Американский доллар"),
+        EUR("€", "Евро")
+    }
+
+    fun getCurrencySymbol(currencyCode: String?): String {
+        return (Currency.entries.find { it.name == currencyCode } ?: RUB).symbol
+    }
 
     /**
      * Formats a numeric amount as a currency string with Russian ruble suffix.
      */
     fun formatAmount(value: Double): String {
-        val symbols = DecimalFormatSymbols(Locale.getDefault()).apply {
-            groupingSeparator = ' '
-            decimalSeparator = '.'
-        }
-        val df = DecimalFormat("#,##0.##", symbols)
-        return "${df.format(value)} ₽"
+        return String.format("%.2f", value)
     }
 
     /**
      * Converts a string representation of a number to a formatted currency string.
      */
     fun formatAmount(value: String): String {
-        return formatAmount(value.toDouble())
+        val res = value.replace(",", ".").toDoubleOrNull()?.let {
+            formatAmount(it)
+        } ?: value
+        return res
     }
 
     /**
@@ -62,6 +69,7 @@ object Formatter {
     /**
      * Returns the month name in Russian genitive case.
      */
+
     private fun monthInGenitive(month: Int): String = when (month) {
         1 -> "января"
         2 -> "февраля"

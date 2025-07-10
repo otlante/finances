@@ -1,7 +1,6 @@
 package com.otlante.finances.ui.screens.expenses
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.otlante.finances.ui.utils.Formatter
 import com.otlante.finances.data.remote.NetworkError
@@ -24,7 +23,7 @@ import javax.inject.Inject
  */
 data class ExpensesUiState(
     val transactions: List<Transaction> = emptyList(),
-    val totalAmount: String = "0 ₽",
+    val totalAmount: String = "0",
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val error: NetworkError? = null
@@ -40,6 +39,7 @@ class ExpensesViewModel @Inject constructor(
     private val repository: ApiRepository
 ) : ViewModel() {
 
+    val accountFlow = repository.accountFlow
     private val _uiState = MutableStateFlow(ExpensesUiState())
     val uiState: StateFlow<ExpensesUiState> = _uiState
 
@@ -97,23 +97,5 @@ class ExpensesViewModel @Inject constructor(
                 error = null
             )
         }
-    }
-}
-
-/**
- * Factory class for creating an instance of [ExpensesViewModel] with the required dependencies.
- *
- * @property repository the repository to inject into the ViewModel
- */
-class ExpensesViewModelFactory(
-    private val repository: ApiRepository
-) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ExpensesViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return ExpensesViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

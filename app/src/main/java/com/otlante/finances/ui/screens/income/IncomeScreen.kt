@@ -11,6 +11,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +23,7 @@ import com.otlante.finances.di.LocalViewModelFactory
 import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
-import com.otlante.finances.ui.screens.account.AccountViewModel
+import com.otlante.finances.ui.utils.Formatter
 
 /**
  * Composable screen displaying a list of income transactions with a total amount summary.
@@ -32,6 +33,7 @@ import com.otlante.finances.ui.screens.account.AccountViewModel
  * and a lazy list of transactions.
  *
  * @param snackBarHostState The snackbar host state to show messages and actions.
+ * @param repository The API repository for fetching income data.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,6 +43,7 @@ fun IncomeScreen(snackBarHostState: SnackbarHostState) {
     val viewModel: IncomeViewModel = viewModel(factory = factory)
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val account by viewModel.accountFlow.collectAsState()
 
     uiState.error?.let { errorMessage ->
         LaunchedEffect(uiState.error) {
@@ -66,7 +69,11 @@ fun IncomeScreen(snackBarHostState: SnackbarHostState) {
                     ListItem(
                         type = ListItemType.SUMMARIZE,
                         title = stringResource(R.string.total),
-                        rightText = uiState.totalAmount,
+                        rightText = "${uiState.totalAmount} ${
+                            Formatter.getCurrencySymbol(
+                                account?.currency
+                            )
+                        }",
                     )
                     HorizontalDivider()
                 }
@@ -75,7 +82,11 @@ fun IncomeScreen(snackBarHostState: SnackbarHostState) {
                         emoji = transaction.category.emoji,
                         title = transaction.category.name,
                         subtitle = transaction.comment,
-                        rightText = transaction.amount,
+                        rightText = "${transaction.amount} ${
+                            Formatter.getCurrencySymbol(
+                                account?.currency
+                            )
+                        }",
                         showArrow = true,
                         onClick = { }
                     )

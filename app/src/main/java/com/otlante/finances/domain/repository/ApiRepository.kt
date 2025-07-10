@@ -4,12 +4,15 @@ import com.otlante.finances.data.remote.ResultState
 import com.otlante.finances.domain.entity.Account
 import com.otlante.finances.domain.entity.Category
 import com.otlante.finances.domain.entity.Transaction
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Repository interface that defines methods to fetch financial data
  * such as transactions, accounts, and categories from a data source.
  */
 interface ApiRepository {
+
+    val accountFlow: StateFlow<Account?>
 
     /**
      * Retrieves expense transactions.
@@ -50,4 +53,10 @@ interface ApiRepository {
         startDate: String,
         endDate: String
     ): ResultState<List<Transaction>>
+
+    suspend fun updateAccount(
+        name: String,
+        balance: String,
+        currency: String,
+    ): ResultState<Account>
 }

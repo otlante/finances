@@ -21,7 +21,9 @@ import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import com.otlante.finances.di.LocalViewModelFactory
+import com.otlante.finances.domain.entity.Account
 import com.otlante.finances.domain.entity.Transaction
+import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.components.DatePickerModal
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
@@ -51,14 +53,8 @@ fun HistoryScreen(
         factory = factory,
     )
 
-//    val viewModel: HistoryViewModel = viewModel(
-//        factory = HistoryViewModelFactory(
-//            repository = repository,
-//            savedStateHandle = navBackStackEntry.savedStateHandle
-//        )
-//    )
-
     val uiState by viewModel.uiState.collectAsState()
+    val account by viewModel.accountFlow.collectAsState()
 
     uiState.error?.let { errorMessage ->
         LaunchedEffect(uiState.error) {
@@ -77,6 +73,7 @@ fun HistoryScreen(
             startDate = uiState.startDate,
             endDate = uiState.endDate,
             totalSum = uiState.totalSum,
+            account = account,
             onStartDateClick = viewModel::onStartDatePickerOpen,
             onEndDateClick = viewModel::onEndDatePickerOpen
         )
@@ -85,7 +82,7 @@ fun HistoryScreen(
             when {
                 uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
 
-                else -> HistoryList(uiState.transactions)
+                else -> HistoryList(uiState.transactions, account)
             }
         }
     }
@@ -109,6 +106,7 @@ private fun HistoryHeader(
     startDate: LocalDate,
     endDate: LocalDate,
     totalSum: String,
+    account: Account?,
     onStartDateClick: () -> Unit,
     onEndDateClick: () -> Unit
 ) {
@@ -130,14 +128,18 @@ private fun HistoryHeader(
         ListItem(
             title = "Сумма",
             type = ListItemType.SUMMARIZE,
-            rightText = totalSum,
+            rightText = "$totalSum ${
+                Formatter.getCurrencySymbol(
+                    account?.currency
+                )
+            }",
         )
         HorizontalDivider()
     }
 }
 
 @Composable
-private fun HistoryList(transactions: List<Transaction>) {
+private fun HistoryList(transactions: List<Transaction>, account: Account?) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(
             items = transactions,
@@ -147,7 +149,11 @@ private fun HistoryList(transactions: List<Transaction>) {
                 emoji = transaction.category.emoji,
                 title = transaction.category.name,
                 subtitle = transaction.comment,
-                rightText = transaction.amount,
+                rightText = "${transaction.amount} ${
+                    Formatter.getCurrencySymbol(
+                        account?.currency
+                    )
+                }",
                 rightComment = Formatter.formatTransactionDate(Formatter.formatDate(transaction.transactionDate)),
                 showArrow = true,
                 onClick = { }

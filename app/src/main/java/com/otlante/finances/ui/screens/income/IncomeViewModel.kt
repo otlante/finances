@@ -42,6 +42,7 @@ class IncomeViewModel @Inject constructor(
     private val repository: ApiRepository
 ) : ViewModel() {
 
+    val accountFlow = repository.accountFlow
     private val _uiState = MutableStateFlow(IncomeUiState())
     val uiState: StateFlow<IncomeUiState> = _uiState
 
