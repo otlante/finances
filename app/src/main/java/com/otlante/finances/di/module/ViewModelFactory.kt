@@ -12,13 +12,11 @@ import javax.inject.Singleton
 @Singleton
 class ViewModelFactory @Inject constructor(
     private val viewModelProviders: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>,
-    // Добавляем провайдер для HistoryViewModel.Factory
     private val historyViewModelFactoryProvider: Provider<HistoryViewModel.Factory>,
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        // Попытка найти обычную ViewModel
         var creator: Provider<out ViewModel>? = viewModelProviders[modelClass]
         if (creator == null) {
             for ((key, value) in viewModelProviders) {
@@ -33,7 +31,6 @@ class ViewModelFactory @Inject constructor(
             return creator.get() as T
         }
 
-        // --- Обработка HistoryViewModel ---
         if (modelClass.isAssignableFrom(HistoryViewModel::class.java)) {
             val savedStateHandle = extras.createSavedStateHandle()
             return historyViewModelFactoryProvider.get().create(savedStateHandle) as T

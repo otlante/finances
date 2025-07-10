@@ -15,7 +15,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-// TODO Singleton
 class ApiRepositoryImpl @Inject constructor(
     private val api: ApiService
 ) : ApiRepository {

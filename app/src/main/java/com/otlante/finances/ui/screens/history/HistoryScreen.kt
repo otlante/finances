@@ -45,7 +45,7 @@ fun HistoryScreen(
 ) {
 
     val factory = LocalViewModelFactory.current
-    val assistedViewModelExtras = MutableCreationExtras()
+    MutableCreationExtras()
     val viewModel: HistoryViewModel = viewModel(
         viewModelStoreOwner = navBackStackEntry,
         factory = factory,
