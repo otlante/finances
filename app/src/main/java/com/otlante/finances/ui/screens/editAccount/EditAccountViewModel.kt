@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * UI state holder for the account screen.
@@ -34,7 +35,7 @@ data class EditAccountUiState(
  *
  * @property repository the [ApiRepository] used to load account data
  */
-class EditAccountViewModel(
+class EditAccountViewModel @Inject constructor(
     private val repository: ApiRepository
 ) : ViewModel() {
 

@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.otlante.finances.R
+import com.otlante.finances.di.LocalViewModelFactory
 import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
@@ -31,14 +32,13 @@ import com.otlante.finances.ui.components.ListItemType
  * loading indicators, and error handling via snackbar.
  *
  * @param snackBarHostState the [SnackbarHostState] used to show error messages and retry prompts
- * @param repository the [ApiRepository] instance used to fetch account data
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountScreen(snackBarHostState: SnackbarHostState, repository: ApiRepository) {
-    val viewModel: AccountViewModel = viewModel(
-        factory = AccountViewModelFactory(repository)
-    )
+fun AccountScreen(snackBarHostState: SnackbarHostState) {
+
+    val factory = LocalViewModelFactory.current
+    val viewModel: AccountViewModel = viewModel(factory = factory)
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

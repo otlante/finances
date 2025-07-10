@@ -29,11 +29,6 @@ import com.otlante.finances.ui.screens.income.IncomeScreen
  */
 @Composable
 fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHostState) {
-
-    val context = LocalContext.current
-    val application = context.applicationContext as MyApplication
-    val repository = application.repository
-
     NavHost(
         navController = navController,
         startDestination = NavDestination.BottomNav.Expenses.route,
@@ -44,16 +39,16 @@ fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHos
         modifier = Modifier
     ) {
         composable(route = NavDestination.BottomNav.Expenses.route) {
-            ExpensesScreen(snackBarHostState = snackBarHostState, repository = repository)
+            ExpensesScreen(snackBarHostState = snackBarHostState)
         }
         composable(route = NavDestination.BottomNav.Incomes.route) {
-            IncomeScreen(snackBarHostState = snackBarHostState, repository = repository)
+            IncomeScreen(snackBarHostState = snackBarHostState)
         }
         composable(route = NavDestination.BottomNav.Account.route) {
-            AccountScreen(snackBarHostState = snackBarHostState, repository = repository)
+            AccountScreen(snackBarHostState = snackBarHostState)
         }
         composable(route = NavDestination.BottomNav.Articles.route) {
-            ArticlesScreen(snackBarHostState = snackBarHostState, repository = repository)
+            ArticlesScreen(snackBarHostState = snackBarHostState)
         }
         composable(route = NavDestination.BottomNav.Settings.route) {
             SettingsScreen()
@@ -65,13 +60,11 @@ fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHos
             HistoryScreen(
                 snackBarHostState = snackBarHostState,
                 navBackStackEntry = it,
-                repository = application.repository
             )
         }
         composable(route = NavDestination.EditAccount.route) {
             EditAccountScreen(
                 snackBarHostState = snackBarHostState,
-                repository = repository,
                 navController = navController
             )
         }

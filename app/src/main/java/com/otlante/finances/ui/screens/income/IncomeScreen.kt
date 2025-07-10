@@ -18,9 +18,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.otlante.finances.R
+import com.otlante.finances.di.LocalViewModelFactory
 import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
+import com.otlante.finances.ui.screens.account.AccountViewModel
 
 /**
  * Composable screen displaying a list of income transactions with a total amount summary.
@@ -30,14 +32,13 @@ import com.otlante.finances.ui.components.ListItemType
  * and a lazy list of transactions.
  *
  * @param snackBarHostState The snackbar host state to show messages and actions.
- * @param repository The API repository for fetching income data.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IncomeScreen(snackBarHostState: SnackbarHostState, repository: ApiRepository) {
-    val viewModel: IncomeViewModel = viewModel(
-        factory = IncomeViewModelFactory(repository)
-    )
+fun IncomeScreen(snackBarHostState: SnackbarHostState) {
+
+    val factory = LocalViewModelFactory.current
+    val viewModel: IncomeViewModel = viewModel(factory = factory)
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

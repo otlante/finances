@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * UI state for the Income screen.
@@ -37,7 +38,7 @@ data class IncomeUiState(
  *
  * @property repository The repository interface to access income transaction data.
  */
-class IncomeViewModel(
+class IncomeViewModel @Inject constructor(
     private val repository: ApiRepository
 ) : ViewModel() {
 

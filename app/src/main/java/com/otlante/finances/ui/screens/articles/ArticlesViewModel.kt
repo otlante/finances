@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * UI state holder for the Articles screen.
@@ -36,7 +37,7 @@ data class ArticlesUiState(
  *
  * @property repository the [ApiRepository] used to load category data
  */
-class ArticlesViewModel(
+class ArticlesViewModel @Inject constructor(
     private val repository: ApiRepository
 ) : ViewModel() {
 

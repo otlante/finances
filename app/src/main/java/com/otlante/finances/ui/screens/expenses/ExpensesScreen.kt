@@ -18,9 +18,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.otlante.finances.R
+import com.otlante.finances.di.LocalViewModelFactory
 import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
+import com.otlante.finances.ui.screens.account.AccountViewModel
 
 /**
  * Composable function that displays the expenses screen, showing a list
@@ -28,14 +30,13 @@ import com.otlante.finances.ui.components.ListItemType
  * loading and error states using a [SnackbarHostState].
  *
  * @param snackBarHostState the [SnackbarHostState] to display error messages and retry actions
- * @param repository the [ApiRepository] instance used to fetch transactions
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExpensesScreen(snackBarHostState: SnackbarHostState, repository: ApiRepository) {
-    val viewModel: ExpensesViewModel = viewModel(
-        factory = ExpensesViewModelFactory(repository)
-    )
+fun ExpensesScreen(snackBarHostState: SnackbarHostState) {
+
+    val factory = LocalViewModelFactory.current
+    val viewModel: ExpensesViewModel = viewModel(factory = factory)
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

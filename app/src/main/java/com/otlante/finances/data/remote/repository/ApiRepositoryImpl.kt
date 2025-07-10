@@ -13,8 +13,10 @@ import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
-class ApiRepositoryImpl(
+// TODO Singleton
+class ApiRepositoryImpl @Inject constructor(
     private val api: ApiService
 ) : ApiRepository {
     private suspend fun resolveCurrentAccountId(): Int {

@@ -3,12 +3,9 @@ package com.otlante.finances.ui.screens.editAccount
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,23 +15,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.otlante.finances.R
-import com.otlante.finances.domain.repository.ApiRepository
+import com.otlante.finances.di.LocalViewModelFactory
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
-import com.otlante.finances.ui.screens.account.AccountUiState
-import com.otlante.finances.ui.screens.account.AccountViewModel
-import com.otlante.finances.ui.screens.account.AccountViewModelFactory
 
 
 @Composable
 fun EditAccountScreen(
     snackBarHostState: SnackbarHostState,
-    repository: ApiRepository,
     navController: NavController
 ) {
-    val viewModel: EditAccountViewModel = viewModel(
-        factory = EditAccountViewModelFactory(repository)
-    )
+
+    val factory = LocalViewModelFactory.current
+    val viewModel: EditAccountViewModel = viewModel(factory = factory)
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

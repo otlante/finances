@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * Represents the UI state of the Expenses screen.
@@ -35,7 +36,7 @@ data class ExpensesUiState(
  *
  * @property repository the [ApiRepository] used to fetch transactions
  */
-class ExpensesViewModel(
+class ExpensesViewModel @Inject constructor(
     private val repository: ApiRepository
 ) : ViewModel() {
 
