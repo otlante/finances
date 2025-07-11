@@ -1,15 +1,17 @@
-package com.otlante.finances.di.module
+package com.otlante.finances.di.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.otlante.finances.di.scope.ActivityScope
 import com.otlante.finances.ui.screens.history.HistoryViewModel
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
+import kotlin.collections.iterator
 
-@Singleton
+@ActivityScope
 class ViewModelFactory @Inject constructor(
     private val viewModelProviders: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>,
     private val historyViewModelFactoryProvider: Provider<HistoryViewModel.Factory>,

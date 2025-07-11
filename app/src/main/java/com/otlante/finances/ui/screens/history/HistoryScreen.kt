@@ -20,10 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
-import com.otlante.finances.di.LocalViewModelFactory
+import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.domain.entity.Account
 import com.otlante.finances.domain.entity.Transaction
-import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.components.DatePickerModal
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType

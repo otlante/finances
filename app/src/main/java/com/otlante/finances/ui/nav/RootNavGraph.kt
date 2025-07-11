@@ -1,14 +1,12 @@
 package com.otlante.finances.ui.nav
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.otlante.finances.di.LocalViewModelFactory
+import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.ui.screens.home.HomeScreen
-import com.otlante.finances.ui.screens.income.IncomeViewModel
 import com.otlante.finances.ui.screens.splash.SplashScreen
 import com.otlante.finances.ui.screens.splash.SplashViewModel
 

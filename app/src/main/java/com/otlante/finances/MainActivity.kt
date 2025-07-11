@@ -8,14 +8,11 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.otlante.finances.di.LocalViewModelFactory
+import com.otlante.finances.di.component.ActivityComponent
+import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.ui.nav.RootNavGraph
-import com.otlante.finances.ui.screens.income.IncomeViewModel
 import com.otlante.finances.ui.screens.splash.SplashViewModel
 import com.otlante.finances.ui.theme.FinancesTheme
-import javax.inject.Inject
 
 /**
  * Main activity that hosts the entire application.
@@ -24,17 +21,26 @@ import javax.inject.Inject
  */
 class MainActivity : ComponentActivity() {
 
+    private lateinit var activityComponent: ActivityComponent
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        appComponent.inject(this)
+
+        activityComponent = appComponent.activityComponent().create()
+        activityComponent.inject(this)
+
+        val splashViewModel: SplashViewModel by viewModels {
+            activityComponent.viewModelFactory()
+        }
+        splashScreen.setKeepOnScreenCondition { !splashViewModel.isReady.value }
         splashScreen.setOnExitAnimationListener { splashScreenView ->
             splashScreenView.remove()
         }
         WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
         setContent {
-            CompositionLocalProvider(LocalViewModelFactory provides appComponent.viewModelFactory()) {
+            CompositionLocalProvider(LocalViewModelFactory provides activityComponent.viewModelFactory()) {
                 FinancesTheme {
                     RootNavGraph()
                 }

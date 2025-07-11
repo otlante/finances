@@ -2,14 +2,13 @@ package com.otlante.finances
 
 import android.app.Application
 import android.content.Context
-import com.otlante.finances.di.AppComponent
-import com.otlante.finances.di.DaggerAppComponent
-import com.otlante.finances.domain.repository.ApiRepository
+import com.otlante.finances.di.component.AppComponent
+import com.otlante.finances.di.component.DaggerAppComponent
 
 /**
  * Application class used for setting up application-wide dependencies.
  *
- * Initializes the [ApiRepository] instance to be shared across the app.
+ * Initializes the [AppComponent] instance to be shared across the app.
  */
 
 class MyApplication : Application() {

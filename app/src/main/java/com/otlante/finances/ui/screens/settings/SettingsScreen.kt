@@ -7,10 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.otlante.finances.di.LocalViewModelFactory
+import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.domain.entity.SettingItem
 import com.otlante.finances.ui.components.ListItem
-import com.otlante.finances.ui.screens.income.IncomeViewModel
 
 /**
  * Composable screen displaying a list of settings items with switches or trailing icons.

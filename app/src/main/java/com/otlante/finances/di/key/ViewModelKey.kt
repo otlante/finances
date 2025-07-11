@@ -1,4 +1,4 @@
-package com.otlante.finances.di.module
+package com.otlante.finances.di.key
 
 import androidx.lifecycle.ViewModel
 import dagger.MapKey

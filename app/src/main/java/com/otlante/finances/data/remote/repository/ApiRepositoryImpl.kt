@@ -26,9 +26,6 @@ class ApiRepositoryImpl @Inject constructor(
     private val api: ApiService
 ) : ApiRepository {
 
-    init {
-        Log.d("ApiRepositoryImpl", "REPO CREATED: ")
-    }
     private val _accountFlow = MutableStateFlow<Account?>(null)
     override val accountFlow: StateFlow<Account?> get() = _accountFlow.asStateFlow()
 

@@ -1,4 +1,4 @@
-package com.otlante.finances.di
+package com.otlante.finances.ui.composition
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.ViewModelProvider

@@ -2,6 +2,8 @@ package com.otlante.finances.di.module
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.otlante.finances.di.factory.ViewModelFactory
+import com.otlante.finances.di.key.ViewModelKey
 import com.otlante.finances.ui.screens.account.AccountViewModel
 import com.otlante.finances.ui.screens.articles.ArticlesViewModel
 import com.otlante.finances.ui.screens.editAccount.EditAccountViewModel

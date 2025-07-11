@@ -1,8 +1,9 @@
-package com.otlante.finances.di
+package com.otlante.finances.di.component
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import com.otlante.finances.MainActivity
+import com.otlante.finances.di.component.ActivityComponent
 import com.otlante.finances.di.module.ApiModule
 import com.otlante.finances.di.module.RepositoryModule
 import com.otlante.finances.di.module.ViewModelModule
@@ -16,16 +17,13 @@ import javax.inject.Singleton
     modules = [
         ApiModule::class,
         RepositoryModule::class,
-        ViewModelModule::class,
     ]
 )
 interface AppComponent {
 
-    fun inject(mainActivity: MainActivity)
-
     fun apiRepository(): ApiRepository
 
-    fun viewModelFactory(): ViewModelProvider.Factory
+    fun activityComponent(): ActivityComponent.Factory
 
     @Component.Factory
     interface Factory {
