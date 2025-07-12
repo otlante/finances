@@ -26,9 +26,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.otlante.finances.R
-import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
+import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.ui.utils.Formatter
 
 
@@ -36,12 +36,11 @@ import com.otlante.finances.ui.utils.Formatter
 @Composable
 fun EditAccountScreen(
     snackBarHostState: SnackbarHostState,
-    repository: ApiRepository,
     navController: NavController
 ) {
-    val viewModel: EditAccountViewModel = viewModel(
-        factory = EditAccountViewModelFactory(repository)
-    )
+
+    val factory = LocalViewModelFactory.current
+    val viewModel: EditAccountViewModel = viewModel(factory = factory)
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

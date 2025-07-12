@@ -1,7 +1,6 @@
 package com.otlante.finances.ui.screens.articles
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.otlante.finances.data.remote.NetworkError
 import com.otlante.finances.domain.entity.Category
@@ -10,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * UI state holder for the Articles screen.
@@ -36,7 +36,7 @@ data class ArticlesUiState(
  *
  * @property repository the [ApiRepository] used to load category data
  */
-class ArticlesViewModel(
+class ArticlesViewModel @Inject constructor(
     private val repository: ApiRepository
 ) : ViewModel() {
 
@@ -113,23 +113,5 @@ class ArticlesViewModel(
     private fun filter(categories: List<Category>, query: String): List<Category> {
         return if (query.isBlank()) categories
         else categories.filter { it.name.contains(query, ignoreCase = true) }
-    }
-}
-
-/**
- * Factory for creating an [ArticlesViewModel] with the required [ApiRepository] dependency.
- *
- * @property repository the repository to inject into the ViewModel
- */
-class ArticlesViewModelFactory(
-    private val repository: ApiRepository
-) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ArticlesViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return ArticlesViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

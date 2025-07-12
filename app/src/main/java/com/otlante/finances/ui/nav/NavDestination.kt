@@ -19,6 +19,23 @@ sealed class NavDestination(val route: String) {
 
     data object EditAccount : NavDestination("editAccount")
 
+    data object AddOrEditTrans : NavDestination("transaction/{mode}?id={id}") {
+        const val MODE_ARG = "mode"
+        const val ID_ARG = "id"
+        val routeWithArgument = "transaction/{$MODE_ARG}?id={$ID_ARG}"
+        val arguments = listOf(
+            navArgument(MODE_ARG) { type = NavType.StringType },
+            navArgument(ID_ARG) {
+                type = NavType.IntType
+            }
+        )
+
+        fun buildRoute(mode: TransactionMode, id: Int? = null): String {
+            return "transaction/${mode.name}?id=${id ?: -1}"
+        }
+    }
+
+
     data object History : NavDestination("history/{parentRoute}") {
         const val PARENT_ROUTE_ARG = "parentRoute"
         val routeWithArgument = "history/{$PARENT_ROUTE_ARG}"
@@ -36,7 +53,7 @@ sealed class NavDestination(val route: String) {
     ) : NavDestination(route) {
 
         data object Expenses : BottomNav(
-            route = "expenses",
+            route = "expense",
             icon = R.drawable.ic_expenses,
             label = R.string.bottom_nav_expenses
         )

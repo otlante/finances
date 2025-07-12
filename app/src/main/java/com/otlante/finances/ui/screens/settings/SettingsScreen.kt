@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.otlante.finances.domain.entity.SettingItem
 import com.otlante.finances.ui.components.ListItem
+import com.otlante.finances.ui.composition.LocalViewModelFactory
 
 /**
  * Composable screen displaying a list of settings items with switches or trailing icons.
@@ -19,9 +20,9 @@ import com.otlante.finances.ui.components.ListItem
 @Composable
 fun SettingsScreen() {
 
-    val viewModel: SettingsViewModel = viewModel(
-        factory = SettingsViewModelFactory()
-    )
+    val factory = LocalViewModelFactory.current
+    val viewModel: SettingsViewModel = viewModel(factory = factory)
+
     val settingsItems by viewModel.settingsItems.collectAsState()
     LazyColumn {
         items(settingsItems) { item ->

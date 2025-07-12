@@ -5,6 +5,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.ui.screens.home.HomeScreen
 import com.otlante.finances.ui.screens.splash.SplashScreen
 import com.otlante.finances.ui.screens.splash.SplashViewModel
@@ -17,7 +18,9 @@ import com.otlante.finances.ui.screens.splash.SplashViewModel
  */
 @Composable
 fun RootNavGraph() {
-    val splashViewModel: SplashViewModel = viewModel()
+
+    val factory = LocalViewModelFactory.current
+    val splashViewModel: SplashViewModel = viewModel(factory = factory)
 
     val navController = rememberNavController()
 

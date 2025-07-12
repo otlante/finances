@@ -1,24 +1,29 @@
 package com.otlante.finances
 
 import android.app.Application
-import com.otlante.finances.data.remote.ApiClient
-import com.otlante.finances.data.remote.repository.ApiRepositoryImpl
-import com.otlante.finances.domain.repository.ApiRepository
+import android.content.Context
+import com.otlante.finances.di.component.AppComponent
+import com.otlante.finances.di.component.DaggerAppComponent
 
 /**
  * Application class used for setting up application-wide dependencies.
  *
- * Initializes the [ApiRepository] instance to be shared across the app.
+ * Initializes the [AppComponent] instance to be shared across the app.
  */
+
 class MyApplication : Application() {
 
-    lateinit var repository: ApiRepository
-        private set
+    lateinit var appComponent: AppComponent
 
     override fun onCreate() {
         super.onCreate()
 
-        val apiService = ApiClient.getApiService(applicationContext)
-        repository = ApiRepositoryImpl(apiService)
+        appComponent = DaggerAppComponent.factory().create(this)
     }
 }
+
+val Context.appComponent: AppComponent
+    get() = when (this) {
+        is MyApplication -> appComponent
+        else -> applicationContext.appComponent
+    }

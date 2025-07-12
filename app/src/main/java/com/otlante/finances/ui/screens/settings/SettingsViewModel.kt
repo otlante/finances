@@ -6,6 +6,7 @@ import com.otlante.finances.domain.entity.SettingItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
 /**
  * ViewModel responsible for managing the settings screen state, including
@@ -16,7 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
  *
  * @constructor Initializes the ViewModel and loads the initial settings list.
  */
-class SettingsViewModel : ViewModel() {
+class SettingsViewModel @Inject constructor() : ViewModel() {
 
     private val _settingsItems = MutableStateFlow<List<SettingItem>>(emptyList())
     val settingsItems: StateFlow<List<SettingItem>> = _settingsItems.asStateFlow()

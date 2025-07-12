@@ -1,6 +1,5 @@
 package com.otlante.finances.ui.screens.home
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -15,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -25,6 +23,8 @@ import com.otlante.finances.ui.components.AppFAB
 import com.otlante.finances.ui.components.AppTopBar
 import com.otlante.finances.ui.nav.AppNavGraph
 import com.otlante.finances.ui.nav.NavDestination
+import com.otlante.finances.ui.nav.TransactionMode
+import com.otlante.finances.ui.screens.addOrEditTrans.AddOrEditTransCallbacksHolder
 import com.otlante.finances.ui.screens.editAccount.EditAccountCallbacksHolder
 
 /**
@@ -40,11 +40,6 @@ fun HomeScreen() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val routesWithFab = setOf(
-        NavDestination.BottomNav.Expenses.route,
-        NavDestination.BottomNav.Incomes.route,
-        NavDestination.BottomNav.Account.route
-    )
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
@@ -54,8 +49,18 @@ fun HomeScreen() {
         },
 
         floatingActionButton = {
-            if (currentRoute in routesWithFab) {
-                AppFAB(onClick = { })
+            if (currentRoute == NavDestination.BottomNav.Incomes.route) {
+                AppFAB {
+                    navController.navigate(
+                        NavDestination.AddOrEditTrans.buildRoute(TransactionMode.ADD_INCOME)
+                    )
+                }
+            } else if (currentRoute == NavDestination.BottomNav.Expenses.route) {
+                AppFAB {
+                    navController.navigate(
+                        NavDestination.AddOrEditTrans.buildRoute(TransactionMode.ADD_EXPENSE)
+                    )
+                }
             }
         }
     ) { paddingValues ->
@@ -160,6 +165,25 @@ private fun getTopBarForRoute(
             actions = {
                 IconButton(onClick = {
                     EditAccountCallbacksHolder.onConfirm?.invoke()
+                }) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_confirm),
+                        contentDescription = "Подтвердить",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        )
+
+        NavDestination.AddOrEditTrans.routeWithArgument -> AppTopBar(
+            title = "Мои доходы",
+            navigationIconResId = R.drawable.ic_cross,
+            onNavigationClick = {
+                AddOrEditTransCallbacksHolder.onCancel?.invoke()
+            },
+            actions = {
+                IconButton(onClick = {
+                    AddOrEditTransCallbacksHolder.onConfirm?.invoke()
                 }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_confirm),

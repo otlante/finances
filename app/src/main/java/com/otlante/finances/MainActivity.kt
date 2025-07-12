@@ -5,8 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import com.otlante.finances.di.component.ActivityComponent
+import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.ui.nav.RootNavGraph
 import com.otlante.finances.ui.screens.splash.SplashViewModel
 import com.otlante.finances.ui.theme.FinancesTheme
@@ -18,20 +21,29 @@ import com.otlante.finances.ui.theme.FinancesTheme
  */
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: SplashViewModel by viewModels()
+    private lateinit var activityComponent: ActivityComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        splashScreen.setKeepOnScreenCondition { !viewModel.isReady.value }
+
+        activityComponent = appComponent.activityComponent().create()
+        activityComponent.inject(this)
+
+        val splashViewModel: SplashViewModel by viewModels {
+            activityComponent.viewModelFactory()
+        }
+        splashScreen.setKeepOnScreenCondition { !splashViewModel.isReady.value }
         splashScreen.setOnExitAnimationListener { splashScreenView ->
             splashScreenView.remove()
         }
         WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
         setContent {
-            FinancesTheme {
-                RootNavGraph()
+            CompositionLocalProvider(LocalViewModelFactory provides activityComponent.viewModelFactory()) {
+                FinancesTheme {
+                    RootNavGraph()
+                }
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.otlante.finances.ui.screens.editAccount
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.otlante.finances.data.remote.NetworkError
 import com.otlante.finances.domain.entity.Account
@@ -11,7 +10,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+/**
+ * UI state holder for the account screen.
+ *
+ * @property account the current [Account] data, or null if not loaded
+ * @property isLoading true if the initial load is in progress
+ * @property isRefreshing true if a pull-to-refresh is in progress
+ * @property error optional [NetworkError] describing the failure
+ */
 data class EditAccountUiState(
     val account: Account? = null,
     val isLoading: Boolean = false,
@@ -28,7 +36,13 @@ data class EditAccountUiState(
     val isCurrencySheetVisible: Boolean = false
 )
 
-class EditAccountViewModel(
+/**
+ * ViewModel responsible for managing the account data and exposing
+ * its state to the UI via [AccountUiState].
+ *
+ * @property repository the [ApiRepository] used to load account data
+ */
+class EditAccountViewModel @Inject constructor(
     private val repository: ApiRepository
 ) : ViewModel() {
 
@@ -39,6 +53,11 @@ class EditAccountViewModel(
         fetchAccount(initial = true)
     }
 
+    /**
+     * Fetches account data from the repository and updates the UI state.
+     *
+     * @param initial true if called during first load, false if called from refresh
+     */
     fun fetchAccount(initial: Boolean = false) {
         viewModelScope.launch {
             updateLoadingState(initial)
@@ -206,23 +225,5 @@ class EditAccountViewModel(
                 }
             )
         }
-    }
-}
-
-/**
- * Factory for creating [AccountViewModel] with the required [ApiRepository] dependency.
- *
- * @property repository the [ApiRepository] passed to the ViewModel
- */
-class EditAccountViewModelFactory(
-    private val repository: ApiRepository
-) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(EditAccountViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return EditAccountViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

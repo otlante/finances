@@ -2,13 +2,15 @@ package com.otlante.finances.ui.screens.history
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.otlante.finances.ui.utils.Formatter
 import com.otlante.finances.data.remote.NetworkError
 import com.otlante.finances.domain.entity.Transaction
 import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.nav.NavDestination
+import com.otlante.finances.ui.utils.Formatter
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -54,10 +56,15 @@ data class HistoryUiState(
  * @param repository Repository to fetch data from.
  * @param savedStateHandle Saved state handle to retrieve navigation arguments.
  */
-class HistoryViewModel(
+class HistoryViewModel @AssistedInject constructor(
     private val repository: ApiRepository,
-    savedStateHandle: SavedStateHandle
+    @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(savedStateHandle: SavedStateHandle): HistoryViewModel
+    }
 
     val accountFlow = repository.accountFlow
     private val _uiState = MutableStateFlow(HistoryUiState())
@@ -172,22 +179,3 @@ class HistoryViewModel(
     }
 }
 
-/**
- * Factory for creating [HistoryViewModel] instances with parameters.
- *
- * @property repository Repository for data access.
- * @property savedStateHandle Saved state handle for navigation arguments.
- */
-class HistoryViewModelFactory(
-    private val repository: ApiRepository,
-    private val savedStateHandle: SavedStateHandle
-) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(HistoryViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return HistoryViewModel(repository, savedStateHandle) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}

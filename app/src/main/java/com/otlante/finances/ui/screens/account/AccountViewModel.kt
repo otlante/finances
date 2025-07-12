@@ -1,16 +1,16 @@
 package com.otlante.finances.ui.screens.account
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.otlante.finances.ui.utils.Formatter
 import com.otlante.finances.data.remote.NetworkError
 import com.otlante.finances.domain.entity.Account
 import com.otlante.finances.domain.repository.ApiRepository
+import com.otlante.finances.ui.utils.Formatter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * UI state holder for the account screen.
@@ -33,7 +33,7 @@ data class AccountUiState(
  *
  * @property repository the [ApiRepository] used to load account data
  */
-class AccountViewModel(
+class AccountViewModel @Inject constructor(
     private val repository: ApiRepository
 ) : ViewModel() {
 
@@ -90,23 +90,5 @@ class AccountViewModel(
                 error = null
             )
         }
-    }
-}
-
-/**
- * Factory for creating [AccountViewModel] with the required [ApiRepository] dependency.
- *
- * @property repository the [ApiRepository] passed to the ViewModel
- */
-class AccountViewModelFactory(
-    private val repository: ApiRepository
-) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(AccountViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return AccountViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

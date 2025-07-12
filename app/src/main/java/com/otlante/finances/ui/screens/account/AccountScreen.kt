@@ -21,9 +21,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.otlante.finances.R
 import com.otlante.finances.domain.entity.Account
-import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
+import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.ui.utils.Formatter
 
 /**
@@ -32,14 +32,13 @@ import com.otlante.finances.ui.utils.Formatter
  * loading indicators, and error handling via snackbar.
  *
  * @param snackBarHostState the [SnackbarHostState] used to show error messages and retry prompts
- * @param repository the [ApiRepository] instance used to fetch account data
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountScreen(snackBarHostState: SnackbarHostState, repository: ApiRepository) {
-    val viewModel: AccountViewModel = viewModel(
-        factory = AccountViewModelFactory(repository)
-    )
+fun AccountScreen(snackBarHostState: SnackbarHostState) {
+
+    val factory = LocalViewModelFactory.current
+    val viewModel: AccountViewModel = viewModel(factory = factory)
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val account by viewModel.accountFlow.collectAsState()
@@ -70,7 +69,9 @@ fun AccountScreen(snackBarHostState: SnackbarHostState, repository: ApiRepositor
 
 @Composable
 private fun AccountContent(account: Account?) {
-    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState())) {
         ListItem(
             type = ListItemType.SUMMARIZE,
             emoji = "\uD83D\uDCB0",

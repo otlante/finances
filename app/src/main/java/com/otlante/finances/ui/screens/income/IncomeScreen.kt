@@ -1,5 +1,6 @@
 package com.otlante.finances.ui.screens.income
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,12 +17,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.otlante.finances.R
 import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
+import com.otlante.finances.ui.composition.LocalViewModelFactory
+import com.otlante.finances.ui.nav.NavDestination
+import com.otlante.finances.ui.nav.TransactionMode
+import com.otlante.finances.ui.screens.addOrEditTrans.SharedRefreshIncomeViewModel
 import com.otlante.finances.ui.utils.Formatter
 
 /**
@@ -36,10 +43,24 @@ import com.otlante.finances.ui.utils.Formatter
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IncomeScreen(snackBarHostState: SnackbarHostState, repository: ApiRepository) {
-    val viewModel: IncomeViewModel = viewModel(
-        factory = IncomeViewModelFactory(repository)
+fun IncomeScreen(snackBarHostState: SnackbarHostState, navController: NavController) {
+
+    val activity = LocalActivity.current as ViewModelStoreOwner
+    val sharedViewModel: SharedRefreshIncomeViewModel = viewModel(
+        viewModelStoreOwner = activity,
+        factory = LocalViewModelFactory.current
     )
+
+    val factory = LocalViewModelFactory.current
+    val viewModel: IncomeViewModel = viewModel(factory = factory)
+
+    val refresh by sharedViewModel.refreshIncomesSignal.collectAsState()
+    LaunchedEffect(refresh) {
+        if (refresh) {
+            viewModel.fetchIncome()
+            sharedViewModel.resetRefreshIncomesSignal()
+        }
+    }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val account by viewModel.accountFlow.collectAsState()
@@ -87,7 +108,13 @@ fun IncomeScreen(snackBarHostState: SnackbarHostState, repository: ApiRepository
                             )
                         }",
                         showArrow = true,
-                        onClick = { }
+                        onClick = {
+                            navController.navigate(
+                                NavDestination.AddOrEditTrans.buildRoute(
+                                    TransactionMode.EDIT_INCOME, transaction.id
+                                )
+                            )
+                        }
                     )
                     HorizontalDivider()
                 }

@@ -21,10 +21,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import com.otlante.finances.domain.entity.Account
 import com.otlante.finances.domain.entity.Transaction
-import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.components.DatePickerModal
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
+import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.ui.utils.Formatter
 import java.time.LocalDate
 import java.time.ZoneId
@@ -41,14 +41,13 @@ import java.time.ZoneId
 @Composable
 fun HistoryScreen(
     snackBarHostState: SnackbarHostState,
-    repository: ApiRepository,
     navBackStackEntry: NavBackStackEntry
 ) {
+
+    val factory = LocalViewModelFactory.current
     val viewModel: HistoryViewModel = viewModel(
-        factory = HistoryViewModelFactory(
-            repository = repository,
-            savedStateHandle = navBackStackEntry.savedStateHandle
-        )
+        viewModelStoreOwner = navBackStackEntry,
+        factory = factory,
     )
 
     val uiState by viewModel.uiState.collectAsState()

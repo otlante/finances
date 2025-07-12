@@ -1,27 +1,35 @@
 package com.otlante.finances.data.remote.repository
 
+import android.util.Log
 import com.otlante.finances.data.remote.ApiService
 import com.otlante.finances.data.remote.NetworkError
 import com.otlante.finances.data.remote.NoConnectionException
 import com.otlante.finances.data.remote.ResultState
 import com.otlante.finances.domain.entity.Account
+import com.otlante.finances.domain.entity.AddTransactionRequest
 import com.otlante.finances.domain.entity.Category
+import com.otlante.finances.domain.entity.EditTransactionRequest
 import com.otlante.finances.domain.entity.Transaction
 import com.otlante.finances.domain.entity.UpdateAccountRequest
 import com.otlante.finances.domain.repository.ApiRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ApiRepositoryImpl(
+@Singleton
+class ApiRepositoryImpl @Inject constructor(
     private val api: ApiService
 ) : ApiRepository {
+
     private val _accountFlow = MutableStateFlow<Account?>(null)
-    override val accountFlow: StateFlow<Account?> get() = _accountFlow
+    override val accountFlow: StateFlow<Account?> get() = _accountFlow.asStateFlow()
 
     private suspend fun resolveCurrentAccountId(): Int {
         val accounts = api.getAccounts()
@@ -55,6 +63,57 @@ class ApiRepositoryImpl(
             val res = api.updateAccount(accountId, request)
             _accountFlow.value = res
             res
+        }
+    }
+
+    override suspend fun addTransaction(
+        accountId: Int,
+        categoryId: Int,
+        amount: String,
+        transactionDate: String,
+        comment: String
+    ): ResultState<Transaction> {
+        return safeNetworkCall {
+            val request = AddTransactionRequest(
+                accountId,
+                categoryId,
+                amount,
+                transactionDate,
+                comment
+            )
+            api.addTransaction(request)
+        }
+    }
+
+    override suspend fun getTransactionById(id: Int): ResultState<Transaction> {
+        return safeNetworkCall {
+            api.getTransactionById(id)
+        }
+    }
+
+    override suspend fun updateTransaction(
+        transactionId: Int,
+        accountId: Int,
+        categoryId: Int,
+        amount: String,
+        transactionDate: String,
+        comment: String
+    ): ResultState<Transaction> {
+        return safeNetworkCall {
+            val request = EditTransactionRequest(
+                accountId,
+                categoryId,
+                amount,
+                transactionDate,
+                comment
+            )
+            api.editTransaction(id = transactionId, request = request)
+        }
+    }
+
+    override suspend fun deleteTransaction(transactionId: Int): ResultState<Unit> {
+        return safeNetworkCall {
+            api.deleteTransaction(id = transactionId)
         }
     }
 
@@ -113,6 +172,7 @@ class ApiRepositoryImpl(
             try {
                 ResultState.Success(apiCall.invoke())
             } catch (e: Exception) {
+                e.printStackTrace()
                 ResultState.Error(mapToNetworkError(e))
             }
         }
