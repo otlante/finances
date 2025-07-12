@@ -26,9 +26,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.otlante.finances.R
-import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
+import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.ui.utils.Formatter
 
 

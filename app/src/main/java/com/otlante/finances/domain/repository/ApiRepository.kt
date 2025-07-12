@@ -59,4 +59,29 @@ interface ApiRepository {
         balance: String,
         currency: String,
     ): ResultState<Account>
+
+    suspend fun addTransaction(
+        accountId: Int,
+        categoryId: Int,
+        amount: String,
+        transactionDate: String,
+        comment: String
+    ): ResultState<Transaction>
+
+    suspend fun getTransactionById(
+        id: Int
+    ): ResultState<Transaction>
+
+    suspend fun updateTransaction(
+        transactionId: Int,
+        accountId: Int,
+        categoryId: Int,
+        amount: String,
+        transactionDate: String,
+        comment: String
+    ): ResultState<Transaction>
+
+    suspend fun deleteTransaction(
+        transactionId: Int
+    ): ResultState<Unit>
 }

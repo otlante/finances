@@ -17,15 +17,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
-import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.domain.entity.Account
 import com.otlante.finances.domain.entity.Transaction
 import com.otlante.finances.ui.components.DatePickerModal
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
+import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.ui.utils.Formatter
 import java.time.LocalDate
 import java.time.ZoneId
@@ -46,7 +45,6 @@ fun HistoryScreen(
 ) {
 
     val factory = LocalViewModelFactory.current
-    MutableCreationExtras()
     val viewModel: HistoryViewModel = viewModel(
         viewModelStoreOwner = navBackStackEntry,
         factory = factory,

@@ -1,5 +1,7 @@
 package com.otlante.finances.data.remote.interceptors
 
+import com.otlante.finances.data.remote.interceptors.RetryInterceptor.Companion.MAX_RETRIES_COUNT
+import com.otlante.finances.data.remote.interceptors.RetryInterceptor.Companion.RETRY_DELAY_MS
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException

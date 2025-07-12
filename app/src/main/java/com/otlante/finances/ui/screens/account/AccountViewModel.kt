@@ -2,10 +2,10 @@ package com.otlante.finances.ui.screens.account
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.otlante.finances.ui.utils.Formatter
 import com.otlante.finances.data.remote.NetworkError
 import com.otlante.finances.domain.entity.Account
 import com.otlante.finances.domain.repository.ApiRepository
+import com.otlante.finances.ui.utils.Formatter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update

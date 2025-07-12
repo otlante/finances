@@ -5,16 +5,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.otlante.finances.di.scope.ActivityScope
+import com.otlante.finances.ui.screens.addOrEditTrans.AddOrEditTransViewModel
 import com.otlante.finances.ui.screens.history.HistoryViewModel
 import javax.inject.Inject
 import javax.inject.Provider
-import javax.inject.Singleton
-import kotlin.collections.iterator
 
 @ActivityScope
 class ViewModelFactory @Inject constructor(
     private val viewModelProviders: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>,
     private val historyViewModelFactoryProvider: Provider<HistoryViewModel.Factory>,
+    private val addOrEditTransViewModelFactoryProvider: Provider<AddOrEditTransViewModel.Factory>,
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
@@ -36,6 +36,11 @@ class ViewModelFactory @Inject constructor(
         if (modelClass.isAssignableFrom(HistoryViewModel::class.java)) {
             val savedStateHandle = extras.createSavedStateHandle()
             return historyViewModelFactoryProvider.get().create(savedStateHandle) as T
+        }
+
+        if (modelClass.isAssignableFrom(AddOrEditTransViewModel::class.java)) {
+            val savedStateHandle = extras.createSavedStateHandle()
+            return addOrEditTransViewModelFactoryProvider.get().create(savedStateHandle) as T
         }
 
         throw IllegalArgumentException("Unknown ViewModel class: $modelClass")

@@ -42,6 +42,11 @@ fun AppBottomNavBar(navController: NavHostController) {
                 navBackStackEntry?.arguments?.getString(NavDestination.History.PARENT_ROUTE_ARG) == destination.route
             } else if (currentRoute == NavDestination.EditAccount.route) {
                 destination.route == NavDestination.BottomNav.Account.route
+            } else if (currentRoute == NavDestination.AddOrEditTrans.routeWithArgument) {
+                val transactionMode =
+                    navBackStackEntry?.arguments?.getString(NavDestination.AddOrEditTrans.MODE_ARG)
+                (transactionMode?.lowercase()?.endsWith(destination.route))
+                    ?: (destination.route == NavDestination.BottomNav.Incomes.route)
             } else {
                 currentRoute == destination.route
             }

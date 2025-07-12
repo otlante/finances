@@ -1,12 +1,11 @@
 package com.otlante.finances.ui.screens.income
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.otlante.finances.ui.utils.Formatter
 import com.otlante.finances.data.remote.NetworkError
 import com.otlante.finances.domain.entity.Transaction
 import com.otlante.finances.domain.repository.ApiRepository
+import com.otlante.finances.ui.utils.Formatter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -39,7 +38,7 @@ data class IncomeUiState(
  * @property repository The repository interface to access income transaction data.
  */
 class IncomeViewModel @Inject constructor(
-    private val repository: ApiRepository
+    private val repository: ApiRepository,
 ) : ViewModel() {
 
     val accountFlow = repository.accountFlow
@@ -101,24 +100,5 @@ class IncomeViewModel @Inject constructor(
                 error = null
             )
         }
-    }
-}
-
-
-/**
- * Factory for creating instances of [IncomeViewModel].
- *
- * @property repository The repository to be passed to the ViewModel.
- */
-class IncomeViewModelFactory(
-    private val repository: ApiRepository
-) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(IncomeViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return IncomeViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

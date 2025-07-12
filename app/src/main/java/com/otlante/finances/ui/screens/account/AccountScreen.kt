@@ -20,10 +20,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.otlante.finances.R
-import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.domain.entity.Account
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
+import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.ui.utils.Formatter
 
 /**
@@ -69,7 +69,9 @@ fun AccountScreen(snackBarHostState: SnackbarHostState) {
 
 @Composable
 private fun AccountContent(account: Account?) {
-    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState())) {
         ListItem(
             type = ListItemType.SUMMARIZE,
             emoji = "\uD83D\uDCB0",

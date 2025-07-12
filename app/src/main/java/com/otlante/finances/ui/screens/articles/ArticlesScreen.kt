@@ -19,9 +19,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.ui.components.AppSearchBar
 import com.otlante.finances.ui.components.ListItem
+import com.otlante.finances.ui.composition.LocalViewModelFactory
 
 /**
  * Composable function displaying the articles screen, which allows

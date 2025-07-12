@@ -1,9 +1,11 @@
 package com.otlante.finances.ui.utils
 
+import android.annotation.SuppressLint
 import com.otlante.finances.ui.utils.Formatter.Currency.RUB
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.Month
+import java.time.LocalTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 
@@ -64,6 +66,19 @@ object Formatter {
         val year = date.year
         val month = monthInGenitive(date.monthValue)
         return "$day $month $year"
+    }
+
+    @SuppressLint("DefaultLocale")
+    fun formatHeaderTime(time: LocalTime): String {
+        val hours = time.hour
+        val minutes = time.minute
+        return String.format("%02d:%02d", hours, minutes)
+    }
+
+    fun formatToIsoUtc(localDate: LocalDate, localTime: LocalTime): String {
+        val localDateTime = localDate.atTime(localTime)
+        val utcZoned = localDateTime.atZone(ZoneOffset.UTC)
+        return utcZoned.format(DateTimeFormatter.ISO_INSTANT)
     }
 
     /**

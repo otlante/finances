@@ -3,11 +3,11 @@ package com.otlante.finances.ui.screens.history
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.otlante.finances.ui.utils.Formatter
 import com.otlante.finances.data.remote.NetworkError
 import com.otlante.finances.domain.entity.Transaction
 import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.nav.NavDestination
+import com.otlante.finances.ui.utils.Formatter
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

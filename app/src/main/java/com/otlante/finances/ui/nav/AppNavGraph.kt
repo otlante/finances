@@ -5,18 +5,17 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.otlante.finances.MyApplication
-import com.otlante.finances.ui.screens.settings.SettingsScreen
 import com.otlante.finances.ui.screens.account.AccountScreen
+import com.otlante.finances.ui.screens.addOrEditTrans.AddOrEditIncomeOrExpenseScreen
 import com.otlante.finances.ui.screens.articles.ArticlesScreen
 import com.otlante.finances.ui.screens.editAccount.EditAccountScreen
 import com.otlante.finances.ui.screens.expenses.ExpensesScreen
 import com.otlante.finances.ui.screens.history.HistoryScreen
 import com.otlante.finances.ui.screens.income.IncomeScreen
+import com.otlante.finances.ui.screens.settings.SettingsScreen
 
 /**
  * Composable function that defines the navigation graph for the app.
@@ -27,6 +26,11 @@ import com.otlante.finances.ui.screens.income.IncomeScreen
  * @param navController the [NavHostController] managing app navigation
  * @param snackBarHostState the [SnackbarHostState] used to show snackbars across screens
  */
+
+enum class TransactionMode {
+    ADD_INCOME, ADD_EXPENSE, EDIT_INCOME, EDIT_EXPENSE
+}
+
 @Composable
 fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHostState) {
     NavHost(
@@ -39,10 +43,10 @@ fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHos
         modifier = Modifier
     ) {
         composable(route = NavDestination.BottomNav.Expenses.route) {
-            ExpensesScreen(snackBarHostState = snackBarHostState)
+            ExpensesScreen(snackBarHostState = snackBarHostState, navController = navController)
         }
         composable(route = NavDestination.BottomNav.Incomes.route) {
-            IncomeScreen(snackBarHostState = snackBarHostState)
+            IncomeScreen(snackBarHostState = snackBarHostState, navController = navController)
         }
         composable(route = NavDestination.BottomNav.Account.route) {
             AccountScreen(snackBarHostState = snackBarHostState)
@@ -66,6 +70,16 @@ fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHos
             EditAccountScreen(
                 snackBarHostState = snackBarHostState,
                 navController = navController
+            )
+        }
+        composable(
+            route = NavDestination.AddOrEditTrans.routeWithArgument,
+            arguments = NavDestination.AddOrEditTrans.arguments
+        ) {
+            AddOrEditIncomeOrExpenseScreen(
+                snackBarHostState = snackBarHostState,
+                navController = navController,
+                navBackStackEntry = it
             )
         }
     }

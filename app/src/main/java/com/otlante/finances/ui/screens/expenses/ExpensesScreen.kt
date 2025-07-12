@@ -1,5 +1,6 @@
 package com.otlante.finances.ui.screens.expenses
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,13 +17,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.otlante.finances.R
-import com.otlante.finances.ui.composition.LocalViewModelFactory
-import com.otlante.finances.domain.repository.ApiRepository
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.components.ListItemType
+import com.otlante.finances.ui.composition.LocalViewModelFactory
+import com.otlante.finances.ui.nav.NavDestination
+import com.otlante.finances.ui.nav.TransactionMode
+import com.otlante.finances.ui.screens.addOrEditTrans.SharedRefreshIncomeViewModel
 import com.otlante.finances.ui.utils.Formatter
 
 /**
@@ -31,14 +36,27 @@ import com.otlante.finances.ui.utils.Formatter
  * loading and error states using a [SnackbarHostState].
  *
  * @param snackBarHostState the [SnackbarHostState] to display error messages and retry actions
- * @param repository the [ApiRepository] instance used to fetch transactions
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExpensesScreen(snackBarHostState: SnackbarHostState) {
+fun ExpensesScreen(snackBarHostState: SnackbarHostState, navController: NavController) {
+
+    val activity = LocalActivity.current as ViewModelStoreOwner
+    val sharedViewModel: SharedRefreshIncomeViewModel = viewModel(
+        viewModelStoreOwner = activity,
+        factory = LocalViewModelFactory.current
+    )
 
     val factory = LocalViewModelFactory.current
     val viewModel: ExpensesViewModel = viewModel(factory = factory)
+
+    val refresh by sharedViewModel.refreshExpensesSignal.collectAsState()
+    LaunchedEffect(refresh) {
+        if (refresh) {
+            viewModel.fetchExpenses()
+            sharedViewModel.resetRefreshExpensesSignal()
+        }
+    }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val account by viewModel.accountFlow.collectAsState()
@@ -87,7 +105,13 @@ fun ExpensesScreen(snackBarHostState: SnackbarHostState) {
                                 )
                             }",
                             showArrow = true,
-                            onClick = { }
+                            onClick = {
+                                navController.navigate(
+                                    NavDestination.AddOrEditTrans.buildRoute(
+                                        TransactionMode.EDIT_EXPENSE, transaction.id
+                                    )
+                                )
+                            }
                         )
                         HorizontalDivider()
                     }

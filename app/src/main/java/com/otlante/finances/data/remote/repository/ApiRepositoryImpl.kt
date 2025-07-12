@@ -6,7 +6,9 @@ import com.otlante.finances.data.remote.NetworkError
 import com.otlante.finances.data.remote.NoConnectionException
 import com.otlante.finances.data.remote.ResultState
 import com.otlante.finances.domain.entity.Account
+import com.otlante.finances.domain.entity.AddTransactionRequest
 import com.otlante.finances.domain.entity.Category
+import com.otlante.finances.domain.entity.EditTransactionRequest
 import com.otlante.finances.domain.entity.Transaction
 import com.otlante.finances.domain.entity.UpdateAccountRequest
 import com.otlante.finances.domain.repository.ApiRepository
@@ -61,6 +63,57 @@ class ApiRepositoryImpl @Inject constructor(
             val res = api.updateAccount(accountId, request)
             _accountFlow.value = res
             res
+        }
+    }
+
+    override suspend fun addTransaction(
+        accountId: Int,
+        categoryId: Int,
+        amount: String,
+        transactionDate: String,
+        comment: String
+    ): ResultState<Transaction> {
+        return safeNetworkCall {
+            val request = AddTransactionRequest(
+                accountId,
+                categoryId,
+                amount,
+                transactionDate,
+                comment
+            )
+            api.addTransaction(request)
+        }
+    }
+
+    override suspend fun getTransactionById(id: Int): ResultState<Transaction> {
+        return safeNetworkCall {
+            api.getTransactionById(id)
+        }
+    }
+
+    override suspend fun updateTransaction(
+        transactionId: Int,
+        accountId: Int,
+        categoryId: Int,
+        amount: String,
+        transactionDate: String,
+        comment: String
+    ): ResultState<Transaction> {
+        return safeNetworkCall {
+            val request = EditTransactionRequest(
+                accountId,
+                categoryId,
+                amount,
+                transactionDate,
+                comment
+            )
+            api.editTransaction(id = transactionId, request = request)
+        }
+    }
+
+    override suspend fun deleteTransaction(transactionId: Int): ResultState<Unit> {
+        return safeNetworkCall {
+            api.deleteTransaction(id = transactionId)
         }
     }
 
@@ -119,6 +172,7 @@ class ApiRepositoryImpl @Inject constructor(
             try {
                 ResultState.Success(apiCall.invoke())
             } catch (e: Exception) {
+                e.printStackTrace()
                 ResultState.Error(mapToNetworkError(e))
             }
         }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.otlante.finances.di.factory.ViewModelFactory
 import com.otlante.finances.di.key.ViewModelKey
+import com.otlante.finances.ui.screens.addOrEditTrans.SharedRefreshIncomeViewModel
 import com.otlante.finances.ui.screens.account.AccountViewModel
 import com.otlante.finances.ui.screens.articles.ArticlesViewModel
 import com.otlante.finances.ui.screens.editAccount.EditAccountViewModel
@@ -39,20 +40,25 @@ interface ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(ExpensesViewModel::class)
-    fun bindExpensesAccountViewModel(expensesViewModel: ExpensesViewModel): ViewModel
+    fun bindExpensesViewModel(expensesViewModel: ExpensesViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(IncomeViewModel::class)
-    fun bindIncomeAccountViewModel(incomeViewModel: IncomeViewModel): ViewModel
+    fun bindIncomeViewModel(incomeViewModel: IncomeViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(SettingsViewModel::class)
-    fun bindSettingsAccountViewModel(settingsViewModel: SettingsViewModel): ViewModel
+    fun bindSettingsViewModel(settingsViewModel: SettingsViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(SplashViewModel::class)
-    fun bindSplashAccountViewModel(splashViewModel: SplashViewModel): ViewModel
+    fun bindSplashViewModel(splashViewModel: SplashViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SharedRefreshIncomeViewModel::class)
+    fun bindSharedRefreshIncomeViewModel(sharedRefreshIncomeViewModel: SharedRefreshIncomeViewModel): ViewModel
 }

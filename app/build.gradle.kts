@@ -86,6 +86,4 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
-//    implementation("com.squareup.inject:assisted-inject-annotations-dagger2:0.5.2")
-//    ksp("com.squareup.inject:assisted-inject-processor-dagger2:0.5.2")
 }
