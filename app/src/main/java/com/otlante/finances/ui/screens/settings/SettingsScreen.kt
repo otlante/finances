@@ -21,7 +21,9 @@ import com.otlante.finances.ui.composition.LocalViewModelFactory
 @Composable
 fun SettingsScreen(
     onVibrationClick: () -> Unit,
-    onPrimaryColorClick: () -> Unit
+    onPrimaryColorClick: () -> Unit,
+    onPinCodeClick: () -> Unit,
+    onPinCodeDisableClick: () -> Unit
 ) {
 
     val factory = LocalViewModelFactory.current
@@ -29,6 +31,7 @@ fun SettingsScreen(
 
     val settingsItems by viewModel.settingsItems.collectAsState()
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
+    val isPinSet by viewModel.isPinSet.collectAsState()
 
     LazyColumn {
         items(settingsItems) { item ->
@@ -42,6 +45,7 @@ fun SettingsScreen(
                 onClick = when (item.title) {
                     "Хаптики" -> onVibrationClick
                     "Основной цвет" -> onPrimaryColorClick
+                    "Код пароль" -> if (isPinSet) onPinCodeDisableClick else onPinCodeClick
                     else -> item.onClick
                 }
             )

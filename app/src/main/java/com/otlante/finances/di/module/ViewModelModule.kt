@@ -12,6 +12,9 @@ import com.otlante.finances.ui.screens.expenses.ExpensesViewModel
 import com.otlante.finances.ui.screens.income.IncomeViewModel
 import com.otlante.finances.ui.screens.settings.SettingsViewModel
 import com.otlante.finances.ui.screens.splash.SplashViewModel
+import com.otlante.finances.ui.screens.pinCode.PinCodeSetupViewModel
+import com.otlante.finances.ui.screens.pinCode.PinCodeEntryViewModel
+import com.otlante.finances.ui.screens.pinCode.PinCodeDisableViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -61,4 +64,19 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(SharedRefreshIncomeViewModel::class)
     fun bindSharedRefreshIncomeViewModel(sharedRefreshIncomeViewModel: SharedRefreshIncomeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PinCodeSetupViewModel::class)
+    fun bindPinCodeSetupViewModel(pinCodeSetupViewModel: PinCodeSetupViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PinCodeEntryViewModel::class)
+    fun bindPinCodeEntryViewModel(pinCodeEntryViewModel: PinCodeEntryViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PinCodeDisableViewModel::class)
+    fun bindPinCodeDisableViewModel(pinCodeDisableViewModel: PinCodeDisableViewModel): ViewModel
 }

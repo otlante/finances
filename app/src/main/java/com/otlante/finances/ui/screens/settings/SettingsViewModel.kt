@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.otlante.finances.data.remote.SettingsDataStore
+import com.otlante.finances.data.remote.repository.PinCodeRepository
 import com.otlante.finances.domain.entity.SettingItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,7 +25,8 @@ import javax.inject.Inject
  * @constructor Initializes the ViewModel and loads the initial settings list.
  */
 class SettingsViewModel @Inject constructor(
-    private val settingsDataStore: SettingsDataStore
+    private val settingsDataStore: SettingsDataStore,
+    private val pinCodeRepository: PinCodeRepository
 ) : ViewModel() {
 
     val isDarkTheme: StateFlow<Boolean> =
@@ -35,6 +37,7 @@ class SettingsViewModel @Inject constructor(
             SharingStarted.Lazily,
             SettingsDataStore.DEFAULT_PRIMARY_COLOR
         )
+    val isPinSet: StateFlow<Boolean> = pinCodeRepository.isPinSet
 
     private val _settingsItems = MutableStateFlow<List<SettingItem>>(emptyList())
     val settingsItems: StateFlow<List<SettingItem>> = _settingsItems.asStateFlow()
@@ -49,11 +52,6 @@ class SettingsViewModel @Inject constructor(
                 ),
                 SettingItem(
                     title = "Основной цвет",
-                    showTrailing = true,
-                    onClick = { }
-                ),
-                SettingItem(
-                    title = "Звуки",
                     showTrailing = true,
                     onClick = { }
                 ),
