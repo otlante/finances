@@ -16,6 +16,7 @@ import com.otlante.finances.ui.screens.expenses.ExpensesScreen
 import com.otlante.finances.ui.screens.history.HistoryScreen
 import com.otlante.finances.ui.screens.income.IncomeScreen
 import com.otlante.finances.ui.screens.settings.SettingsScreen
+import com.otlante.finances.ui.screens.settings.VibrationSettingsScreen
 
 /**
  * Composable function that defines the navigation graph for the app.
@@ -55,7 +56,10 @@ fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHos
             ArticlesScreen(snackBarHostState = snackBarHostState)
         }
         composable(route = NavDestination.BottomNav.Settings.route) {
-            SettingsScreen()
+            SettingsScreen(onVibrationClick = { navController.navigate(NavDestination.VibrationSettings.route) })
+        }
+        composable(route = NavDestination.VibrationSettings.route) {
+            VibrationSettingsScreen(onBack = { navController.popBackStack() })
         }
         composable(
             route = NavDestination.History.routeWithArgument,

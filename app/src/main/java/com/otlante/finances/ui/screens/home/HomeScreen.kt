@@ -1,5 +1,7 @@
 package com.otlante.finances.ui.screens.home
 
+import android.R.attr.duration
+import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -26,6 +28,20 @@ import com.otlante.finances.ui.nav.NavDestination
 import com.otlante.finances.ui.nav.TransactionMode
 import com.otlante.finances.ui.screens.addOrEditTrans.AddOrEditTransCallbacksHolder
 import com.otlante.finances.ui.screens.editAccount.EditAccountCallbacksHolder
+import android.os.Build
+import android.os.CombinedVibration
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
+import android.widget.Toast
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat.getSystemService
+import com.otlante.finances.data.remote.repository.VibrationSettingsRepository
+import com.otlante.finances.ui.screens.settings.VibrationMode
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 /**
  * Root composable for the home screen containing scaffold layout with top bar, bottom navigation,
@@ -40,12 +56,64 @@ fun HomeScreen() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val context = LocalContext.current.applicationContext
+    val vibrationSettingsRepository = remember { VibrationSettingsRepository(context) }
+    val coroutineScope = rememberCoroutineScope()
+    val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val manager = context.getSystemService(VibratorManager::class.java)
+        manager?.defaultVibrator
+    } else {
+        @Suppress("DEPRECATION")
+        context.getSystemService(Vibrator::class.java)
+    }
+    val vibratorManager: VibratorManager? by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+        } else {
+            null
+        }
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         topBar = getTopBarForRoute(currentRoute, navController),
         bottomBar = {
-            AppBottomNavBar(navController)
+            AppBottomNavBar(navController, onTabSelected = { _ ->
+                coroutineScope.launch {
+                    val enabled = vibrationSettingsRepository.isVibrationEnabled.first()
+                    if (enabled) {
+                        val mode = vibrationSettingsRepository.vibrationMode.first()
+                        when (mode) {
+                            VibrationMode.SHORT -> simpleVibrate(vibrator, 20L)
+                            VibrationMode.MEDIUM -> simpleVibrate(vibrator, 50L)
+                            VibrationMode.LONG -> simpleVibrate(vibrator, 100L)
+                            VibrationMode.PRIMITIVE_LOW_TICK -> {
+                                vibrateWithEffect(
+                                    vibrator,
+                                    vibratorManager,
+                                    VibrationEffect.Composition.PRIMITIVE_LOW_TICK
+                                )
+                            }
+
+                            VibrationMode.PRIMITIVE_SPIN -> {
+                                vibrateWithEffect(
+                                    vibrator,
+                                    vibratorManager,
+                                    VibrationEffect.Composition.PRIMITIVE_SPIN
+                                )
+                            }
+
+                            VibrationMode.PRIMITIVE_THUD -> {
+                                vibrateWithEffect(
+                                    vibrator,
+                                    vibratorManager,
+                                    VibrationEffect.Composition.PRIMITIVE_THUD
+                                )
+                            }
+                        }
+                    }
+                }
+            })
         },
 
         floatingActionButton = {
@@ -69,6 +137,43 @@ fun HomeScreen() {
         ) {
             AppNavGraph(navController, snackBarHostState)
         }
+    }
+}
+
+private fun simpleVibrate(
+    vibrator: Vibrator?,
+    duration: Long
+) {
+    vibrator?.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
+}
+
+private fun vibrateWithEffect(
+    vibrator: Vibrator?,
+    vibratorManager: VibratorManager?,
+    effectId: Int
+) {
+    if (isPrimitiveSupported(
+            effectId,
+            vibratorManager
+        ) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    ) {
+        vibratorManager?.vibrate(
+            CombinedVibration.createParallel(
+                VibrationEffect.startComposition()
+                    .addPrimitive(effectId)
+                    .compose()
+            )
+        )
+    } else {
+        simpleVibrate(vibrator, 100L)
+    }
+}
+
+private fun isPrimitiveSupported(effectId: Int, vibratorManager: VibratorManager?): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        vibratorManager?.defaultVibrator?.areAllPrimitivesSupported(effectId) ?: false
+    } else {
+        false
     }
 }
 

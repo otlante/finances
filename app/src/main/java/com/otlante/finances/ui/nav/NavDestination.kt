@@ -46,6 +46,8 @@ sealed class NavDestination(val route: String) {
         fun buildRoute(parentRoute: String) = "history/$parentRoute"
     }
 
+    data object VibrationSettings : NavDestination("vibrationSettings")
+
     sealed class BottomNav(
         route: String,
         @DrawableRes val icon: Int,

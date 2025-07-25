@@ -24,7 +24,10 @@ import com.otlante.finances.ui.nav.NavDestination
  * @param navController the [NavHostController] managing app navigation state
  */
 @Composable
-fun AppBottomNavBar(navController: NavHostController) {
+fun AppBottomNavBar(
+    navController: NavHostController,
+    onTabSelected: ((NavDestination.BottomNav) -> Unit)? = null
+) {
     val destinations = listOf(
         NavDestination.BottomNav.Expenses,
         NavDestination.BottomNav.Incomes,
@@ -47,11 +50,13 @@ fun AppBottomNavBar(navController: NavHostController) {
                     navBackStackEntry?.arguments?.getString(NavDestination.AddOrEditTrans.MODE_ARG)
                 (transactionMode?.lowercase()?.endsWith(destination.route))
                     ?: (destination.route == NavDestination.BottomNav.Incomes.route)
+            } else if (currentRoute == NavDestination.VibrationSettings.route) {
+                destination.route == NavDestination.BottomNav.Settings.route
             } else {
                 currentRoute == destination.route
             }
 
-            GetNavigationBarItem(destination, isSelected, navController)
+            GetNavigationBarItem(destination, isSelected, navController, onTabSelected)
         }
     }
 }
@@ -60,7 +65,8 @@ fun AppBottomNavBar(navController: NavHostController) {
 private fun RowScope.GetNavigationBarItem(
     destination: NavDestination.BottomNav,
     isSelected: Boolean,
-    navController: NavHostController
+    navController: NavHostController,
+    onTabSelected: ((NavDestination.BottomNav) -> Unit)?
 ) {
     NavigationBarItem(
         label = { Text(text = stringResource(id = destination.label)) },
@@ -82,6 +88,7 @@ private fun RowScope.GetNavigationBarItem(
                     launchSingleTop = true
                     restoreState = true
                 }
+                onTabSelected?.invoke(destination)
             }
         }
     )

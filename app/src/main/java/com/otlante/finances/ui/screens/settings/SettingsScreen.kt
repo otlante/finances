@@ -18,7 +18,9 @@ import com.otlante.finances.ui.composition.LocalViewModelFactory
  * a trailing arrow, and handle click or toggle events.
  */
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    onVibrationClick: () -> Unit
+) {
 
     val factory = LocalViewModelFactory.current
     val viewModel: SettingsViewModel = viewModel(factory = factory)
@@ -32,7 +34,7 @@ fun SettingsScreen() {
                 showTrailing = item.showTrailing,
                 showSwitch = item.showSwitch,
                 onCheckedChange = item.onCheckedChange,
-                onClick = item.onClick
+                onClick = if (item.title == "Хаптики") onVibrationClick else item.onClick
             )
             HorizontalDivider()
         }
