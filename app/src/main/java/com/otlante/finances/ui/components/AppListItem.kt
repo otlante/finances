@@ -62,6 +62,7 @@ fun ListItem(
     showArrow: Boolean = false,
     showTrailing: Boolean = false,
     showSwitch: Boolean = false,
+    initialSwitchState: Boolean = false,
     onCheckedChange: ((Boolean) -> Unit)? = null,
     onClick: (() -> Unit)? = null
 ) {
@@ -101,7 +102,7 @@ fun ListItem(
             modifier = Modifier.weight(1f)
         )
 
-        TrailingElement(showArrow, showTrailing, showSwitch, onCheckedChange)
+        TrailingElement(showArrow, showTrailing, showSwitch, initialSwitchState, onCheckedChange)
     }
 }
 
@@ -170,6 +171,7 @@ private fun TrailingElement(
     showArrow: Boolean,
     showTrailing: Boolean,
     showSwitch: Boolean,
+    initialSwitchState: Boolean,
     onCheckedChange: ((Boolean) -> Unit)?
 ) {
     when {
@@ -184,13 +186,9 @@ private fun TrailingElement(
         )
 
         showSwitch -> {
-            var checked by remember { mutableStateOf(false) }
             Switch(
-                checked = checked,
-                onCheckedChange = {
-                    checked = it
-                    onCheckedChange?.invoke(it)
-                },
+                checked = initialSwitchState,
+                onCheckedChange = onCheckedChange
             )
         }
     }

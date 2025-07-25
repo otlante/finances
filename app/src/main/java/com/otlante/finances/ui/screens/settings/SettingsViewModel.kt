@@ -2,10 +2,16 @@ package com.otlante.finances.ui.screens.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.otlante.finances.data.remote.SettingsDataStore
 import com.otlante.finances.domain.entity.SettingItem
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -17,71 +23,74 @@ import javax.inject.Inject
  *
  * @constructor Initializes the ViewModel and loads the initial settings list.
  */
-class SettingsViewModel @Inject constructor() : ViewModel() {
+class SettingsViewModel @Inject constructor(
+    private val settingsDataStore: SettingsDataStore
+) : ViewModel() {
+
+    val isDarkTheme: StateFlow<Boolean> =
+        settingsDataStore.isDarkTheme.stateIn(viewModelScope, SharingStarted.Lazily, false)
+    val primaryColor: StateFlow<Int> =
+        settingsDataStore.primaryColor.stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            SettingsDataStore.DEFAULT_PRIMARY_COLOR
+        )
 
     private val _settingsItems = MutableStateFlow<List<SettingItem>>(emptyList())
     val settingsItems: StateFlow<List<SettingItem>> = _settingsItems.asStateFlow()
 
     init {
-        loadSettings()
-    }
-
-    private fun loadSettings() {
-        _settingsItems.value = listOf(
-            SettingItem(
-                title = "Тёмная тема",
-                showSwitch = true,
-                onCheckedChange = { }
-            ),
-            SettingItem(
-                title = "Основной цвет",
-                showTrailing = true,
-                onClick = { }
-            ),
-            SettingItem(
-                title = "Звуки",
-                showTrailing = true,
-                onClick = { }
-            ),
-            SettingItem(
-                title = "Хаптики",
-                showTrailing = true,
-                onClick = { }
-            ),
-            SettingItem(
-                title = "Код пароль",
-                showTrailing = true,
-                onClick = { }
-            ),
-            SettingItem(
-                title = "Синхронизация",
-                showTrailing = true,
-                onClick = { }
-            ),
-            SettingItem(
-                title = "Язык",
-                showTrailing = true,
-                onClick = { }
-            ),
-            SettingItem(
-                title = "О программе",
-                showTrailing = true,
-                onClick = { }
+        viewModelScope.launch {
+            _settingsItems.value = listOf(
+                SettingItem(
+                    title = "Тёмная тема",
+                    showSwitch = true,
+                    onCheckedChange = { setDarkTheme(it) }
+                ),
+                SettingItem(
+                    title = "Основной цвет",
+                    showTrailing = true,
+                    onClick = { }
+                ),
+                SettingItem(
+                    title = "Звуки",
+                    showTrailing = true,
+                    onClick = { }
+                ),
+                SettingItem(
+                    title = "Хаптики",
+                    showTrailing = true,
+                    onClick = { }
+                ),
+                SettingItem(
+                    title = "Код пароль",
+                    showTrailing = true,
+                    onClick = { }
+                ),
+                SettingItem(
+                    title = "Синхронизация",
+                    showTrailing = true,
+                    onClick = { }
+                ),
+                SettingItem(
+                    title = "Язык",
+                    showTrailing = true,
+                    onClick = { }
+                ),
+                SettingItem(
+                    title = "О программе",
+                    showTrailing = true,
+                    onClick = { }
+                )
             )
-        )
-    }
-}
-
-/**
- * Factory for creating instances of [SettingsViewModel].
- */
-class SettingsViewModelFactory : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return SettingsViewModel() as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+
+    fun setDarkTheme(enabled: Boolean) {
+        viewModelScope.launch { settingsDataStore.setDarkTheme(enabled) }
+    }
+
+    fun setPrimaryColor(color: Int) {
+        viewModelScope.launch { settingsDataStore.setPrimaryColor(color) }
     }
 }

@@ -13,6 +13,11 @@ import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.ui.nav.RootNavGraph
 import com.otlante.finances.ui.screens.splash.SplashViewModel
 import com.otlante.finances.ui.theme.FinancesTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.otlante.finances.ui.screens.settings.SettingsViewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.graphics.Color
 
 /**
  * Main activity that hosts the entire application.
@@ -41,7 +46,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CompositionLocalProvider(LocalViewModelFactory provides activityComponent.viewModelFactory()) {
-                FinancesTheme {
+                val factory = LocalViewModelFactory.current
+                val settingsViewModel: SettingsViewModel =
+                    viewModel(factory = factory)
+                val isDarkTheme by settingsViewModel.isDarkTheme.collectAsState()
+                val primaryColorInt by settingsViewModel.primaryColor.collectAsState()
+                val primaryColor = Color(primaryColorInt)
+                FinancesTheme(isDarkTheme = isDarkTheme, primaryColor = primaryColor) {
                     RootNavGraph()
                 }
             }

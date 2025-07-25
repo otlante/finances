@@ -17,6 +17,10 @@ import com.otlante.finances.ui.screens.history.HistoryScreen
 import com.otlante.finances.ui.screens.income.IncomeScreen
 import com.otlante.finances.ui.screens.settings.SettingsScreen
 import com.otlante.finances.ui.screens.settings.VibrationSettingsScreen
+import com.otlante.finances.ui.screens.settings.PrimaryColorPickerScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.otlante.finances.ui.screens.settings.SettingsViewModel
+import com.otlante.finances.ui.composition.LocalViewModelFactory
 
 /**
  * Composable function that defines the navigation graph for the app.
@@ -56,7 +60,10 @@ fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHos
             ArticlesScreen(snackBarHostState = snackBarHostState)
         }
         composable(route = NavDestination.BottomNav.Settings.route) {
-            SettingsScreen(onVibrationClick = { navController.navigate(NavDestination.VibrationSettings.route) })
+            SettingsScreen(
+                onVibrationClick = { navController.navigate(NavDestination.VibrationSettings.route) },
+                onPrimaryColorClick = { navController.navigate(NavDestination.PrimaryColorPicker.route) }
+            )
         }
         composable(route = NavDestination.VibrationSettings.route) {
             VibrationSettingsScreen(onBack = { navController.popBackStack() })
@@ -84,6 +91,17 @@ fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHos
                 snackBarHostState = snackBarHostState,
                 navController = navController,
                 navBackStackEntry = it
+            )
+        }
+        composable(route = NavDestination.PrimaryColorPicker.route) {
+            val factory = LocalViewModelFactory.current
+            val settingsViewModel: SettingsViewModel = viewModel(factory = factory)
+            PrimaryColorPickerScreen(
+                onColorClick = {
+                    settingsViewModel.setPrimaryColor(it)
+                    navController.popBackStack()
+                },
+                onBack = { navController.popBackStack() }
             )
         }
     }

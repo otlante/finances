@@ -6,6 +6,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.otlante.finances.domain.entity.SettingItem
 import com.otlante.finances.ui.components.ListItem
@@ -19,13 +20,16 @@ import com.otlante.finances.ui.composition.LocalViewModelFactory
  */
 @Composable
 fun SettingsScreen(
-    onVibrationClick: () -> Unit
+    onVibrationClick: () -> Unit,
+    onPrimaryColorClick: () -> Unit
 ) {
 
     val factory = LocalViewModelFactory.current
     val viewModel: SettingsViewModel = viewModel(factory = factory)
 
     val settingsItems by viewModel.settingsItems.collectAsState()
+    val isDarkTheme by viewModel.isDarkTheme.collectAsState()
+
     LazyColumn {
         items(settingsItems) { item ->
             ListItem(
@@ -33,8 +37,13 @@ fun SettingsScreen(
                 showArrow = item.showArrow,
                 showTrailing = item.showTrailing,
                 showSwitch = item.showSwitch,
-                onCheckedChange = item.onCheckedChange,
-                onClick = if (item.title == "Хаптики") onVibrationClick else item.onClick
+                initialSwitchState = if (item.title == "Тёмная тема") isDarkTheme else false,
+                onCheckedChange = if (item.title == "Тёмная тема") viewModel::setDarkTheme else item.onCheckedChange,
+                onClick = when (item.title) {
+                    "Хаптики" -> onVibrationClick
+                    "Основной цвет" -> onPrimaryColorClick
+                    else -> item.onClick
+                }
             )
             HorizontalDivider()
         }

@@ -48,6 +48,8 @@ sealed class NavDestination(val route: String) {
 
     data object VibrationSettings : NavDestination("vibrationSettings")
 
+    data object PrimaryColorPicker : NavDestination("primaryColorPicker")
+
     sealed class BottomNav(
         route: String,
         @DrawableRes val icon: Int,
