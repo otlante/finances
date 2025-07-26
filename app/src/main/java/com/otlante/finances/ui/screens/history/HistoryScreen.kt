@@ -17,8 +17,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
+import com.otlante.finances.R
 import com.otlante.finances.domain.entity.Account
 import com.otlante.finances.domain.entity.Transaction
 import com.otlante.finances.ui.components.DatePickerModal
@@ -109,21 +112,21 @@ private fun HistoryHeader(
 ) {
     Column(modifier = Modifier.background(MaterialTheme.colorScheme.secondary)) {
         ListItem(
-            title = "Начало",
+            title = stringResource(R.string.history_start),
             type = ListItemType.SUMMARIZE,
-            rightText = Formatter.formatHeaderDate(startDate),
+            rightText = Formatter.formatHeaderDate(LocalContext.current, startDate),
             onClick = onStartDateClick
         )
         HorizontalDivider()
         ListItem(
-            title = "Конец",
+            title = stringResource(R.string.history_end),
             type = ListItemType.SUMMARIZE,
-            rightText = Formatter.formatHeaderDate(endDate),
+            rightText = Formatter.formatHeaderDate(LocalContext.current, endDate),
             onClick = onEndDateClick
         )
         HorizontalDivider()
         ListItem(
-            title = "Сумма",
+            title = stringResource(R.string.history_amount),
             type = ListItemType.SUMMARIZE,
             rightText = "$totalSum ${
                 Formatter.getCurrencySymbol(
@@ -151,7 +154,10 @@ private fun HistoryList(transactions: List<Transaction>, account: Account?) {
                         account?.currency
                     )
                 }",
-                rightComment = Formatter.formatTransactionDate(Formatter.formatDate(transaction.transactionDate)),
+                rightComment = Formatter.formatTransactionDate(
+                    LocalContext.current,
+                    Formatter.formatDate(transaction.transactionDate)
+                ),
                 showArrow = true,
                 onClick = { }
             )

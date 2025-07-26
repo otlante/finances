@@ -17,8 +17,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.otlante.finances.R
 import com.otlante.finances.ui.components.AppSearchBar
 import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.composition.LocalViewModelFactory
@@ -67,7 +69,7 @@ fun ArticlesScreen(snackBarHostState: SnackbarHostState) {
                         AppSearchBar(
                             query = uiState.searchQuery,
                             onQueryChange = { viewModel.onSearchQueryChanged(it) },
-                            placeholder = "Найти статью"
+                            placeholder = stringResource(R.string.find_article)
                         )
                     }
                     HorizontalDivider()

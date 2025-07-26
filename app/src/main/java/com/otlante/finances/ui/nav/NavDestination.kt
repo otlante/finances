@@ -46,6 +46,20 @@ sealed class NavDestination(val route: String) {
         fun buildRoute(parentRoute: String) = "history/$parentRoute"
     }
 
+    data object VibrationSettings : NavDestination("vibrationSettings")
+
+    data object PrimaryColorPicker : NavDestination("primaryColorPicker")
+
+    data object PinCodeSetup : NavDestination("pinCodeSetup")
+
+    data object PinCodeEntry : NavDestination("pinCodeEntry")
+
+    data object PinCodeDisable : NavDestination("pinCodeDisable")
+
+    data object SyncSettings : NavDestination("syncSettings")
+
+    data object About : NavDestination("about")
+
     sealed class BottomNav(
         route: String,
         @DrawableRes val icon: Int,

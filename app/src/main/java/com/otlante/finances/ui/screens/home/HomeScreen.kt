@@ -1,5 +1,11 @@
 package com.otlante.finances.ui.screens.home
 
+import android.content.Context
+import android.os.Build
+import android.os.CombinedVibration
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -11,13 +17,16 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.otlante.finances.R
+import com.otlante.finances.data.remote.repository.VibrationSettingsRepository
 import com.otlante.finances.ui.components.AppBottomNavBar
 import com.otlante.finances.ui.components.AppFAB
 import com.otlante.finances.ui.components.AppTopBar
@@ -26,6 +35,9 @@ import com.otlante.finances.ui.nav.NavDestination
 import com.otlante.finances.ui.nav.TransactionMode
 import com.otlante.finances.ui.screens.addOrEditTrans.AddOrEditTransCallbacksHolder
 import com.otlante.finances.ui.screens.editAccount.EditAccountCallbacksHolder
+import com.otlante.finances.ui.screens.settings.VibrationMode
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 /**
  * Root composable for the home screen containing scaffold layout with top bar, bottom navigation,
@@ -40,12 +52,64 @@ fun HomeScreen() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val context = LocalContext.current.applicationContext
+    val vibrationSettingsRepository = remember { VibrationSettingsRepository(context) }
+    val coroutineScope = rememberCoroutineScope()
+    val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val manager = context.getSystemService(VibratorManager::class.java)
+        manager?.defaultVibrator
+    } else {
+        @Suppress("DEPRECATION")
+        context.getSystemService(Vibrator::class.java)
+    }
+    val vibratorManager: VibratorManager? by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+        } else {
+            null
+        }
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         topBar = getTopBarForRoute(currentRoute, navController),
         bottomBar = {
-            AppBottomNavBar(navController)
+            AppBottomNavBar(navController, onTabSelected = { _ ->
+                coroutineScope.launch {
+                    val enabled = vibrationSettingsRepository.isVibrationEnabled.first()
+                    if (enabled) {
+                        val mode = vibrationSettingsRepository.vibrationMode.first()
+                        when (mode) {
+                            VibrationMode.SHORT -> simpleVibrate(vibrator, 20L)
+                            VibrationMode.MEDIUM -> simpleVibrate(vibrator, 50L)
+                            VibrationMode.LONG -> simpleVibrate(vibrator, 100L)
+                            VibrationMode.PRIMITIVE_LOW_TICK -> {
+                                vibrateWithEffect(
+                                    vibrator,
+                                    vibratorManager,
+                                    VibrationEffect.Composition.PRIMITIVE_LOW_TICK
+                                )
+                            }
+
+                            VibrationMode.PRIMITIVE_SPIN -> {
+                                vibrateWithEffect(
+                                    vibrator,
+                                    vibratorManager,
+                                    VibrationEffect.Composition.PRIMITIVE_SPIN
+                                )
+                            }
+
+                            VibrationMode.PRIMITIVE_THUD -> {
+                                vibrateWithEffect(
+                                    vibrator,
+                                    vibratorManager,
+                                    VibrationEffect.Composition.PRIMITIVE_THUD
+                                )
+                            }
+                        }
+                    }
+                }
+            })
         },
 
         floatingActionButton = {
@@ -69,6 +133,43 @@ fun HomeScreen() {
         ) {
             AppNavGraph(navController, snackBarHostState)
         }
+    }
+}
+
+private fun simpleVibrate(
+    vibrator: Vibrator?,
+    duration: Long
+) {
+    vibrator?.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
+}
+
+private fun vibrateWithEffect(
+    vibrator: Vibrator?,
+    vibratorManager: VibratorManager?,
+    effectId: Int
+) {
+    if (isPrimitiveSupported(
+            effectId,
+            vibratorManager
+        ) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    ) {
+        vibratorManager?.vibrate(
+            CombinedVibration.createParallel(
+                VibrationEffect.startComposition()
+                    .addPrimitive(effectId)
+                    .compose()
+            )
+        )
+    } else {
+        simpleVibrate(vibrator, 100L)
+    }
+}
+
+private fun isPrimitiveSupported(effectId: Int, vibratorManager: VibratorManager?): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        vibratorManager?.defaultVibrator?.areAllPrimitivesSupported(effectId) ?: false
+    } else {
+        false
     }
 }
 
@@ -140,7 +241,7 @@ private fun getTopBarForRoute(
         NavDestination.BottomNav.Settings.route -> AppTopBar(title = stringResource(R.string.settings_top_bar_title))
 
         NavDestination.History.routeWithArgument -> AppTopBar(
-            title = "Моя история",
+            title = stringResource(R.string.history_title),
             navigationIconResId = R.drawable.ic_back,
             onNavigationClick = {
                 navController.popBackStack()
@@ -149,7 +250,7 @@ private fun getTopBarForRoute(
                 IconButton(onClick = { }) {
                     Icon(
                         painterResource(R.drawable.ic_history_timer),
-                        contentDescription = "Анализ истории",
+                        contentDescription = stringResource(R.string.history_analysis),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -157,7 +258,7 @@ private fun getTopBarForRoute(
         )
 
         NavDestination.EditAccount.route -> AppTopBar(
-            title = "Редактировать аккаунт",
+            title = stringResource(R.string.edit_account_title),
             navigationIconResId = R.drawable.ic_cross,
             onNavigationClick = {
                 EditAccountCallbacksHolder.onCancel?.invoke()
@@ -168,7 +269,7 @@ private fun getTopBarForRoute(
                 }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_confirm),
-                        contentDescription = "Подтвердить",
+                        contentDescription = stringResource(R.string.confirm),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -176,7 +277,7 @@ private fun getTopBarForRoute(
         )
 
         NavDestination.AddOrEditTrans.routeWithArgument -> AppTopBar(
-            title = "Мои доходы",
+            title = stringResource(R.string.my_incomes_title),
             navigationIconResId = R.drawable.ic_cross,
             onNavigationClick = {
                 AddOrEditTransCallbacksHolder.onCancel?.invoke()
@@ -187,7 +288,7 @@ private fun getTopBarForRoute(
                 }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_confirm),
-                        contentDescription = "Подтвердить",
+                        contentDescription = stringResource(R.string.confirm),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }

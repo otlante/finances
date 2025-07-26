@@ -1,11 +1,14 @@
 package com.otlante.finances.ui.screens.settings
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.otlante.finances.domain.entity.SettingItem
-import kotlinx.coroutines.flow.MutableStateFlow
+import androidx.lifecycle.viewModelScope
+import com.otlante.finances.data.remote.SettingsDataStore
+import com.otlante.finances.data.remote.repository.PinCodeRepository
+import com.otlante.finances.domain.entity.Language
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -17,71 +20,42 @@ import javax.inject.Inject
  *
  * @constructor Initializes the ViewModel and loads the initial settings list.
  */
-class SettingsViewModel @Inject constructor() : ViewModel() {
+class SettingsViewModel @Inject constructor(
+    val settingsDataStore: SettingsDataStore,
+    private val pinCodeRepository: PinCodeRepository
+) : ViewModel() {
 
-    private val _settingsItems = MutableStateFlow<List<SettingItem>>(emptyList())
-    val settingsItems: StateFlow<List<SettingItem>> = _settingsItems.asStateFlow()
-
-    init {
-        loadSettings()
-    }
-
-    private fun loadSettings() {
-        _settingsItems.value = listOf(
-            SettingItem(
-                title = "Тёмная тема",
-                showSwitch = true,
-                onCheckedChange = { }
-            ),
-            SettingItem(
-                title = "Основной цвет",
-                showTrailing = true,
-                onClick = { }
-            ),
-            SettingItem(
-                title = "Звуки",
-                showTrailing = true,
-                onClick = { }
-            ),
-            SettingItem(
-                title = "Хаптики",
-                showTrailing = true,
-                onClick = { }
-            ),
-            SettingItem(
-                title = "Код пароль",
-                showTrailing = true,
-                onClick = { }
-            ),
-            SettingItem(
-                title = "Синхронизация",
-                showTrailing = true,
-                onClick = { }
-            ),
-            SettingItem(
-                title = "Язык",
-                showTrailing = true,
-                onClick = { }
-            ),
-            SettingItem(
-                title = "О программе",
-                showTrailing = true,
-                onClick = { }
-            )
+    val isDarkTheme: StateFlow<Boolean> =
+        settingsDataStore.isDarkTheme.stateIn(viewModelScope, SharingStarted.Lazily, false)
+    val primaryColor: StateFlow<Int> =
+        settingsDataStore.primaryColor.stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            SettingsDataStore.DEFAULT_PRIMARY_COLOR
         )
+    val syncIntervalHours: StateFlow<Int> =
+        settingsDataStore.syncIntervalHours.stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            SettingsDataStore.DEFAULT_SYNC_INTERVAL_HOURS
+        )
+    val language: StateFlow<Language> =
+        settingsDataStore.language.stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            SettingsDataStore.DEFAULT_LANGUAGE
+        )
+    val isPinSet: StateFlow<Boolean> = pinCodeRepository.isPinSet
+
+    fun setDarkTheme(enabled: Boolean) {
+        viewModelScope.launch { settingsDataStore.setDarkTheme(enabled) }
     }
-}
 
-/**
- * Factory for creating instances of [SettingsViewModel].
- */
-class SettingsViewModelFactory : ViewModelProvider.Factory {
+    fun setPrimaryColor(color: Int) {
+        viewModelScope.launch { settingsDataStore.setPrimaryColor(color) }
+    }
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return SettingsViewModel() as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
+    fun setSyncIntervalHours(hours: Int) {
+        viewModelScope.launch { settingsDataStore.setSyncIntervalHours(hours) }
     }
 }

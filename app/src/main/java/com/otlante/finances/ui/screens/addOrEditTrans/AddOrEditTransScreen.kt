@@ -29,7 +29,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
@@ -40,6 +42,7 @@ import androidx.navigation.NavController
 import com.otlante.finances.domain.entity.Account
 import com.otlante.finances.ui.components.DatePickerModal
 import com.otlante.finances.ui.components.ListItem
+import com.otlante.finances.R
 import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.ui.screens.addOrEditTrans.SharedRefreshIncomeViewModel
 import com.otlante.finances.ui.utils.Formatter
@@ -139,7 +142,7 @@ fun Dialogs(
 fun NameDialog(uiState: AddOrEditIncomeOrExpenseUiState, viewModel: AddOrEditTransViewModel) {
     AlertDialog(
         onDismissRequest = { viewModel.onNameDialogDismiss() },
-        title = { Text("Редактировать имя") },
+        title = { Text(stringResource(R.string.edit_name_title)) },
         text = {
             TextField(
                 value = uiState.editedName,
@@ -149,7 +152,7 @@ fun NameDialog(uiState: AddOrEditIncomeOrExpenseUiState, viewModel: AddOrEditTra
         },
         confirmButton = {
             TextButton(onClick = { viewModel.onNameDialogConfirm() }) {
-                Text("OK")
+                Text(stringResource(R.string.ok))
             }
         }
     )
@@ -189,12 +192,12 @@ fun TimePickerDialog(
         onDismissRequest = onDismiss,
         dismissButton = {
             TextButton(onClick = { onDismiss() }) {
-                Text("Отмена")
+                Text(stringResource(R.string.cancel))
             }
         },
         confirmButton = {
             TextButton(onClick = { onConfirm() }) {
-                Text("OK")
+                Text(stringResource(R.string.ok))
             }
         },
         text = { content() }
@@ -214,7 +217,7 @@ fun DateDialog(uiState: AddOrEditIncomeOrExpenseUiState, viewModel: AddOrEditTra
 fun SumDialog(uiState: AddOrEditIncomeOrExpenseUiState, viewModel: AddOrEditTransViewModel) {
     AlertDialog(
         onDismissRequest = { viewModel.onSumEditDismiss() },
-        title = { Text("Сумма") },
+        title = { Text(stringResource(R.string.amount_title)) },
         text = {
             TextField(
                 value = uiState.editedSum,
@@ -225,7 +228,7 @@ fun SumDialog(uiState: AddOrEditIncomeOrExpenseUiState, viewModel: AddOrEditTran
         },
         confirmButton = {
             TextButton(onClick = { viewModel.confirmSumEdit() }) {
-                Text("OK")
+                Text(stringResource(R.string.ok))
             }
         }
     )
@@ -239,33 +242,33 @@ private fun MainContent(
 ) {
     Column {
         ListItem(
-            title = "Счёт",
+            title = stringResource(R.string.transaction_account),
             rightText = uiState.account?.name ?: ""
         )
         HorizontalDivider()
         ListItem(
-            title = "Статья",
+            title = stringResource(R.string.transaction_category),
             rightText = uiState.editedCategory?.name ?: "",
             showArrow = true,
             onClick = { viewModel.onCategoryClick() }
         )
         HorizontalDivider()
         ListItem(
-            title = "Сумма",
+            title = stringResource(R.string.transaction_amount),
             rightText = "${uiState.checkedSum} ${Formatter.getCurrencySymbol(account?.currency)}",
             showArrow = true,
             onClick = { viewModel.onSumClick() }
         )
         HorizontalDivider()
         ListItem(
-            title = "Дата",
-            rightText = Formatter.formatHeaderDate(uiState.editedDate),
+            title = stringResource(R.string.transaction_date),
+            rightText = Formatter.formatHeaderDate(LocalContext.current, uiState.editedDate),
             showArrow = true,
             onClick = { viewModel.onDateClick() }
         )
         HorizontalDivider()
         ListItem(
-            title = "Время",
+            title = stringResource(R.string.transaction_time),
             rightText = Formatter.formatHeaderTime(uiState.editedTime),
             showArrow = true,
             onClick = { viewModel.onTimeClick() }
@@ -286,7 +289,7 @@ private fun MainContent(
                     .padding(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
             ) {
-                Text(text = "Удалить транзакцию", color = Color.White)
+                Text(text = stringResource(R.string.delete_transaction), color = Color.White)
             }
         }
     }
@@ -299,7 +302,7 @@ fun CategoriesDialog(
 ) {
     AlertDialog(
         onDismissRequest = { viewModel.onCategorySelectDismiss() },
-        title = { Text("Выберите категорию") },
+        title = { Text(stringResource(R.string.select_category_title)) },
         text = {
             Column {
                 uiState.incomeCategories?.forEach { category ->
@@ -317,7 +320,7 @@ fun CategoriesDialog(
         },
         confirmButton = {
             TextButton(onClick = { viewModel.onCategorySelectDismiss() }) {
-                Text("Закрыть")
+                Text(stringResource(R.string.close))
             }
         }
     )

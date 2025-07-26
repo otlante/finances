@@ -15,6 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import com.otlante.finances.R
 
 /**
  * Composable function that displays a customizable search bar
@@ -30,7 +32,7 @@ fun AppSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    placeholder: String = "Search"
+    placeholder: String = stringResource(R.string.search)
 ) {
     val focusManager = LocalFocusManager.current
     Column(
@@ -47,7 +49,7 @@ fun AppSearchBar(
             trailingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "Найти"
+                    contentDescription = stringResource(R.string.search)
                 )
             },
 

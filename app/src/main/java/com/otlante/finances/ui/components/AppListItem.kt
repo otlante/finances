@@ -18,13 +18,10 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -62,6 +59,7 @@ fun ListItem(
     showArrow: Boolean = false,
     showTrailing: Boolean = false,
     showSwitch: Boolean = false,
+    initialSwitchState: Boolean = false,
     onCheckedChange: ((Boolean) -> Unit)? = null,
     onClick: (() -> Unit)? = null
 ) {
@@ -101,7 +99,7 @@ fun ListItem(
             modifier = Modifier.weight(1f)
         )
 
-        TrailingElement(showArrow, showTrailing, showSwitch, onCheckedChange)
+        TrailingElement(showArrow, showTrailing, showSwitch, initialSwitchState, onCheckedChange)
     }
 }
 
@@ -170,6 +168,7 @@ private fun TrailingElement(
     showArrow: Boolean,
     showTrailing: Boolean,
     showSwitch: Boolean,
+    initialSwitchState: Boolean,
     onCheckedChange: ((Boolean) -> Unit)?
 ) {
     when {
@@ -184,13 +183,10 @@ private fun TrailingElement(
         )
 
         showSwitch -> {
-            var checked by remember { mutableStateOf(false) }
             Switch(
-                checked = checked,
-                onCheckedChange = {
-                    checked = it
-                    onCheckedChange?.invoke(it)
-                },
+                checked = initialSwitchState,
+                onCheckedChange = onCheckedChange,
+                modifier = Modifier.testTag("theme_switch")
             )
         }
     }

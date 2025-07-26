@@ -89,7 +89,7 @@ private fun Dialogs(
     if (uiState.isNameDialogVisible) {
         AlertDialog(
             onDismissRequest = { viewModel.dismissNameEdit() },
-            title = { Text("Редактировать имя") },
+            title = { Text(stringResource(R.string.edit_name_title)) },
             text = {
                 TextField(
                     value = uiState.editedName ?: "",
@@ -99,7 +99,7 @@ private fun Dialogs(
             },
             confirmButton = {
                 TextButton(onClick = { viewModel.confirmNameEdit() }) {
-                    Text("OK")
+                    Text(stringResource(R.string.ok))
                 }
             }
         )
@@ -108,7 +108,7 @@ private fun Dialogs(
     if (uiState.isBalanceDialogVisible) {
         AlertDialog(
             onDismissRequest = { viewModel.dismissBalanceEdit() },
-            title = { Text("Редактировать баланс") },
+            title = { Text(stringResource(R.string.edit_balance_title)) },
             text = {
                 TextField(
                     value = uiState.editedBalance ?: "",
@@ -119,7 +119,7 @@ private fun Dialogs(
             },
             confirmButton = {
                 TextButton(onClick = { viewModel.confirmBalanceEdit() }) {
-                    Text("OK")
+                    Text(stringResource(R.string.ok))
                 }
             }
         )
@@ -134,7 +134,7 @@ private fun Dialogs(
             Formatter.Currency.entries.toTypedArray().forEach { currency ->
                 ListItem(
                     emoji = currency.symbol,
-                    title = currency.description,
+                    title = stringResource(currency.descriptionResId),
                     onClick = { viewModel.onCurrencySelected(currency.toString()) }
                 )
                 HorizontalDivider()
