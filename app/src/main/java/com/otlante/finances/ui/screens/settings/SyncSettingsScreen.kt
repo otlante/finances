@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,9 +27,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.otlante.finances.BuildConfig
 import com.otlante.finances.R
+import com.otlante.finances.ui.components.ListItem
 import com.otlante.finances.ui.composition.LocalViewModelFactory
 
 @Composable
@@ -47,7 +52,6 @@ fun SyncSettingsScreen(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
     ) {
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -68,7 +72,7 @@ fun SyncSettingsScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -113,4 +117,4 @@ fun SyncSettingsScreen(
             }
         }
     }
-} 
+}

@@ -55,7 +55,8 @@ fun AppBottomNavBar(
                 currentRoute == NavDestination.PrimaryColorPicker.route ||
                 currentRoute == NavDestination.PinCodeSetup.route ||
                 currentRoute == NavDestination.PinCodeDisable.route ||
-                currentRoute == NavDestination.SyncSettings.route
+                currentRoute == NavDestination.SyncSettings.route ||
+                currentRoute == NavDestination.About.route
             ) {
                 destination.route == NavDestination.BottomNav.Settings.route
             } else {

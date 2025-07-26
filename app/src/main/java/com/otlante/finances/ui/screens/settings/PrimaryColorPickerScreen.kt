@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -25,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.otlante.finances.R
@@ -46,41 +49,46 @@ fun PrimaryColorPickerScreen(
     onColorClick: (Int) -> Unit,
     onBack: () -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.primary_color_picker_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
-                        )
-                    }
-                }
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+    ) {
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            IconButton(onClick = onBack, modifier = Modifier.align(Alignment.CenterStart)) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                    contentDescription = stringResource(R.string.back)
+                )
+            }
+            Text(
+                text = stringResource(R.string.primary_color_picker_title),
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.align(Alignment.Center)
             )
         }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(32.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            text = stringResource(R.string.primary_color_picker_subtitle),
+            fontSize = 18.sp
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround
         ) {
-            Text(stringResource(R.string.primary_color_picker_subtitle), fontSize = 18.sp)
-            Spacer(modifier = Modifier.height(32.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
-                primaryColors.forEach { color ->
-                    Box(
-                        modifier = Modifier
-                            .size(56.dp)
-                            .background(Color(color), CircleShape)
-                            .clickable { onColorClick(color) }
-                    )
-                }
+            primaryColors.forEach { color ->
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .background(Color(color), CircleShape)
+                        .clickable { onColorClick(color) }
+                )
             }
         }
+        Spacer(modifier = Modifier.weight(1f))
     }
 } 

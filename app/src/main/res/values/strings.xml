@@ -132,4 +132,10 @@
     <string name="currency_rub">Российский рубль</string>
     <string name="currency_usd">Американский доллар</string>
     <string name="currency_eur">Евро</string>
+
+    <!-- About -->
+    <string name="about_title">О программе</string>
+    <string name="about_version">Версия</string>
+    <string name="about_last_update">Последнее обновление</string>
+    <string name="about_app_name">Finances</string>
 </resources>

@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Properties
 
 val localProperties = Properties()
@@ -32,9 +34,19 @@ android {
     buildTypes {
         debug {
             buildConfigField("String", "API_TOKEN", "\"$BEARER_TOKEN\"")
+            buildConfigField(
+                "String",
+                "BUILD_DATE",
+                "\"${SimpleDateFormat("dd.MM.yyyy").format(Date())}\""
+            )
         }
         release {
             buildConfigField("String", "API_TOKEN", "\"$BEARER_TOKEN\"")
+            buildConfigField(
+                "String",
+                "BUILD_DATE",
+                "\"${SimpleDateFormat("dd.MM.yyyy").format(Date())}\""
+            )
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

@@ -47,7 +47,8 @@ fun SettingsScreen(
     onPrimaryColorClick: () -> Unit,
     onPinCodeClick: () -> Unit,
     onPinCodeDisableClick: () -> Unit,
-    onSyncClick: () -> Unit
+    onSyncClick: () -> Unit,
+    onAboutClick: () -> Unit
 ) {
     var showLanguageSelection by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -119,7 +120,7 @@ fun SettingsScreen(
             ListItem(
                 title = stringResource(R.string.settings_about),
                 showTrailing = true,
-                onClick = { }
+                onClick = onAboutClick
             )
             HorizontalDivider()
         }

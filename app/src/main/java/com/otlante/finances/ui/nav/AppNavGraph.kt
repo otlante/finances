@@ -19,6 +19,7 @@ import com.otlante.finances.ui.screens.settings.SettingsScreen
 import com.otlante.finances.ui.screens.settings.VibrationSettingsScreen
 import com.otlante.finances.ui.screens.settings.PrimaryColorPickerScreen
 import com.otlante.finances.ui.screens.settings.SyncSettingsScreen
+import com.otlante.finances.ui.screens.settings.AboutScreen
 import com.otlante.finances.ui.screens.pinCode.PinCodeSetupScreen
 import com.otlante.finances.ui.screens.pinCode.PinCodeEntryScreen
 import com.otlante.finances.ui.screens.pinCode.PinCodeDisableScreen
@@ -69,7 +70,8 @@ fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHos
                 onPrimaryColorClick = { navController.navigate(NavDestination.PrimaryColorPicker.route) },
                 onPinCodeClick = { navController.navigate(NavDestination.PinCodeSetup.route) },
                 onPinCodeDisableClick = { navController.navigate(NavDestination.PinCodeDisable.route) },
-                onSyncClick = { navController.navigate(NavDestination.SyncSettings.route) }
+                onSyncClick = { navController.navigate(NavDestination.SyncSettings.route) },
+                onAboutClick = { navController.navigate(NavDestination.About.route) }
             )
         }
         composable(route = NavDestination.VibrationSettings.route) {
@@ -77,6 +79,9 @@ fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHos
         }
         composable(route = NavDestination.SyncSettings.route) {
             SyncSettingsScreen(onBackClick = { navController.popBackStack() })
+        }
+        composable(route = NavDestination.About.route) {
+            AboutScreen(onBackClick = { navController.popBackStack() })
         }
         composable(
             route = NavDestination.History.routeWithArgument,

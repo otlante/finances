@@ -1,20 +1,20 @@
 package com.otlante.finances.ui.screens.settings
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,43 +41,44 @@ fun VibrationSettingsScreen(
     )
     val isEnabled by viewModel.isVibrationEnabled.collectAsState()
     val mode by viewModel.vibrationMode.collectAsState()
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.vibration_settings_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
-                        )
-                    }
-                }
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+    ) {
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            IconButton(onClick = onBack, modifier = Modifier.align(Alignment.CenterStart)) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                    contentDescription = stringResource(R.string.back)
+                )
+            }
+            Text(
+                text = stringResource(R.string.vibration_settings_title),
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.align(Alignment.Center)
             )
         }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.vibration_enabled), modifier = Modifier.weight(1f))
-                Switch(checked = isEnabled, onCheckedChange = viewModel::setVibrationEnabled)
-            }
-            Text(stringResource(R.string.vibration_mode))
-            VibrationMode.entries.forEach { vibrationMode ->
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(
-                        selected = mode == vibrationMode,
-                        onClick = { viewModel.setVibrationMode(vibrationMode) },
-                        enabled = isEnabled
-                    )
-                    Text(vibrationMode.name)
-                }
+            Text(stringResource(R.string.vibration_enabled), modifier = Modifier.weight(1f))
+            Switch(checked = isEnabled, onCheckedChange = viewModel::setVibrationEnabled)
+        }
+        Text(modifier = Modifier.padding(16.dp), text = stringResource(R.string.vibration_mode))
+        VibrationMode.entries.forEach { vibrationMode ->
+            Row(
+                modifier = Modifier.padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = mode == vibrationMode,
+                    onClick = { viewModel.setVibrationMode(vibrationMode) },
+                    enabled = isEnabled
+                )
+                Text(vibrationMode.name)
             }
         }
     }

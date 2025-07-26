@@ -58,6 +58,8 @@ sealed class NavDestination(val route: String) {
 
     data object SyncSettings : NavDestination("syncSettings")
 
+    data object About : NavDestination("about")
+
     sealed class BottomNav(
         route: String,
         @DrawableRes val icon: Int,
