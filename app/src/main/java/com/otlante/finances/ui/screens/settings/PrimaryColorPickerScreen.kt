@@ -24,8 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.otlante.finances.R
 import com.otlante.finances.ui.theme.PrimaryGreen
 import com.otlante.finances.ui.theme.PrimaryOrange
 import com.otlante.finances.ui.theme.PrimaryPurple
@@ -47,12 +49,12 @@ fun PrimaryColorPickerScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Выбор основного цвета") },
+                title = { Text(stringResource(R.string.primary_color_picker_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = "Назад"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 }
@@ -67,7 +69,7 @@ fun PrimaryColorPickerScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Выберите основной цвет:", fontSize = 18.sp)
+            Text(stringResource(R.string.primary_color_picker_subtitle), fontSize = 18.sp)
             Spacer(modifier = Modifier.height(32.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
                 primaryColors.forEach { color ->

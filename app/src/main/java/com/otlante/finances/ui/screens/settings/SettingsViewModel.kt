@@ -1,16 +1,12 @@
 package com.otlante.finances.ui.screens.settings
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.otlante.finances.data.remote.SettingsDataStore
 import com.otlante.finances.data.remote.repository.PinCodeRepository
-import com.otlante.finances.domain.entity.SettingItem
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.otlante.finances.domain.entity.Language
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,7 +21,7 @@ import javax.inject.Inject
  * @constructor Initializes the ViewModel and loads the initial settings list.
  */
 class SettingsViewModel @Inject constructor(
-    private val settingsDataStore: SettingsDataStore,
+    val settingsDataStore: SettingsDataStore,
     private val pinCodeRepository: PinCodeRepository
 ) : ViewModel() {
 
@@ -43,52 +39,13 @@ class SettingsViewModel @Inject constructor(
             SharingStarted.Lazily,
             SettingsDataStore.DEFAULT_SYNC_INTERVAL_HOURS
         )
+    val language: StateFlow<Language> =
+        settingsDataStore.language.stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            SettingsDataStore.DEFAULT_LANGUAGE
+        )
     val isPinSet: StateFlow<Boolean> = pinCodeRepository.isPinSet
-
-    private val _settingsItems = MutableStateFlow<List<SettingItem>>(emptyList())
-    val settingsItems: StateFlow<List<SettingItem>> = _settingsItems.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            _settingsItems.value = listOf(
-                SettingItem(
-                    title = "Тёмная тема",
-                    showSwitch = true,
-                    onCheckedChange = { setDarkTheme(it) }
-                ),
-                SettingItem(
-                    title = "Основной цвет",
-                    showTrailing = true,
-                    onClick = { }
-                ),
-                SettingItem(
-                    title = "Хаптики",
-                    showTrailing = true,
-                    onClick = { }
-                ),
-                SettingItem(
-                    title = "Код пароль",
-                    showTrailing = true,
-                    onClick = { }
-                ),
-                SettingItem(
-                    title = "Синхронизация",
-                    showTrailing = true,
-                    onClick = { }
-                ),
-                SettingItem(
-                    title = "Язык",
-                    showTrailing = true,
-                    onClick = { }
-                ),
-                SettingItem(
-                    title = "О программе",
-                    showTrailing = true,
-                    onClick = { }
-                )
-            )
-        }
-    }
 
     fun setDarkTheme(enabled: Boolean) {
         viewModelScope.launch { settingsDataStore.setDarkTheme(enabled) }

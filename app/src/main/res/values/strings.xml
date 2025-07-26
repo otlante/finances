@@ -20,6 +20,116 @@
     <string name="currency">Валюта</string>
     <string name="find_article">Найти статью</string>
     <string name="show_more">Подробнее</string>
-    <string name="confirm">Подтвердить</string>
     <string name="account_name">Название</string>
+
+    <!-- Settings -->
+    <string name="settings_dark_theme">Тёмная тема</string>
+    <string name="settings_primary_color">Основной цвет</string>
+    <string name="settings_haptics">Хаптики</string>
+    <string name="settings_pin_code">Код пароль</string>
+    <string name="settings_sync">Синхронизация</string>
+    <string name="settings_language">Язык</string>
+    <string name="settings_about">О программе</string>
+
+    <!-- Language Selection -->
+    <string name="language_russian">Русский</string>
+    <string name="language_english">English</string>
+    <string name="language_selection_title">Выберите язык</string>
+
+    <!-- Vibration Settings -->
+    <string name="vibration_settings_title">Настройки вибрации</string>
+    <string name="vibration_enabled">Вибрация</string>
+    <string name="vibration_mode">Режим вибрации:</string>
+
+    <!-- Sync Settings -->
+    <string name="sync_settings_title">Синхронизация</string>
+    <string name="sync_interval_title">Интервал синхронизации</string>
+    <string name="sync_interval_hours">%d часов</string>
+    <string name="sync_interval_1_hour">1 час</string>
+    <string name="sync_interval_24_hours">24 часа</string>
+
+    <!-- Common -->
+    <string name="back">Назад</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Отмена</string>
+    <string name="save">Сохранить</string>
+    <string name="delete">Удалить</string>
+    <string name="edit">Редактировать</string>
+    <string name="add">Добавить</string>
+    <string name="close">Закрыть</string>
+
+    <!-- Dialogs and Modals -->
+    <string name="edit_name_title">Редактировать имя</string>
+    <string name="edit_balance_title">Редактировать баланс</string>
+    <string name="amount_title">Сумма</string>
+    <string name="select_category_title">Выберите категорию</string>
+    <string name="primary_color_picker_title">Выбор основного цвета</string>
+    <string name="primary_color_picker_subtitle">Выберите основной цвет:</string>
+
+    <!-- Transaction -->
+    <string name="transaction_account">Счёт</string>
+    <string name="transaction_category">Статья</string>
+    <string name="transaction_amount">Сумма</string>
+    <string name="transaction_date">Дата</string>
+    <string name="transaction_time">Время</string>
+    <string name="transaction_name">Название</string>
+    <string name="delete_transaction">Удалить транзакцию</string>
+
+    <!-- History -->
+    <string name="history_title">Моя история</string>
+    <string name="history_analysis">Анализ истории</string>
+    <string name="history_start">Начало</string>
+    <string name="history_end">Конец</string>
+    <string name="history_amount">Сумма</string>
+
+    <!-- Account -->
+    <string name="edit_account_title">Редактировать аккаунт</string>
+    <string name="my_incomes_title">Мои доходы</string>
+    <string name="confirm">Подтвердить</string>
+
+    <!-- Search -->
+    <string name="search">Найти</string>
+
+    <!-- Pin Code -->
+    <string name="pin_code_label">PIN-код</string>
+    <string name="pin_code_cancel">Отмена</string>
+    <string name="pin_code_enter">Введите PIN-код</string>
+    <string name="pin_code_for_access">Для доступа к приложению</string>
+    <string name="pin_code_login">Войти</string>
+    <string name="pin_code_disable_title">Отключить PIN-код</string>
+    <string name="pin_code_disable_subtitle">Введите текущий PIN-код для отключения</string>
+    <string name="pin_code_disable">Отключить</string>
+    <string name="pin_code_setup_title_first">Установите PIN-код</string>
+    <string name="pin_code_setup_title_confirm">Подтвердите PIN-код</string>
+    <string name="pin_code_setup_subtitle_first">Введите 4-значный PIN-код</string>
+    <string name="pin_code_setup_subtitle_confirm">Повторите PIN-код для подтверждения</string>
+    <string name="pin_code_setup_next">Далее</string>
+    <string name="pin_code_setup_title">Установить код пароль</string>
+    <string name="pin_code_entry_title">Введите код пароль</string>
+    <string name="pin_code_setup_install">Установить</string>
+    <string name="pin_code_error_wrong">Неверный PIN-код</string>
+    <string name="pin_code_error_disable">Ошибка при отключении PIN-кода</string>
+    <string name="pin_code_error_save">Ошибка при сохранении PIN-кода</string>
+
+    <!-- Error Messages -->
+    <string name="retry">Повторить</string>
+
+    <!-- Months -->
+    <string name="month_january">января</string>
+    <string name="month_february">февраля</string>
+    <string name="month_march">марта</string>
+    <string name="month_april">апреля</string>
+    <string name="month_may">мая</string>
+    <string name="month_june">июня</string>
+    <string name="month_july">июля</string>
+    <string name="month_august">августа</string>
+    <string name="month_september">сентября</string>
+    <string name="month_october">октября</string>
+    <string name="month_november">ноября</string>
+    <string name="month_december">декабря</string>
+
+    <!-- Currencies -->
+    <string name="currency_rub">Российский рубль</string>
+    <string name="currency_usd">Американский доллар</string>
+    <string name="currency_eur">Евро</string>
 </resources>

@@ -1,5 +1,7 @@
 package com.otlante.finances
 
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,6 +10,8 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import com.otlante.finances.data.local.LocaleManager
+import com.otlante.finances.data.remote.SettingsDataStore
 import com.otlante.finances.di.component.ActivityComponent
 import com.otlante.finances.ui.composition.LocalViewModelFactory
 import com.otlante.finances.ui.nav.RootNavGraph
@@ -18,6 +22,9 @@ import com.otlante.finances.ui.screens.settings.SettingsViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
+import com.otlante.finances.domain.entity.Language
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 /**
  * Main activity that hosts the entire application.
@@ -27,6 +34,15 @@ import androidx.compose.ui.graphics.Color
 class MainActivity : ComponentActivity() {
 
     private lateinit var activityComponent: ActivityComponent
+
+    override fun attachBaseContext(base: Context) {
+        var savedLanguage = Language.RUSSIAN
+        runBlocking {
+            val settingsDataStore = SettingsDataStore(base)
+            savedLanguage = settingsDataStore.language.first()
+        }
+        super.attachBaseContext(LocaleManager.setLocale(base, savedLanguage.code))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()

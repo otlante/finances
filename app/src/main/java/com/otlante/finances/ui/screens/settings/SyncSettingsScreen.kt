@@ -24,8 +24,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.otlante.finances.R
 import com.otlante.finances.ui.composition.LocalViewModelFactory
 
 @Composable
@@ -34,14 +36,14 @@ fun SyncSettingsScreen(
 ) {
     val factory = LocalViewModelFactory.current
     val viewModel: SettingsViewModel = viewModel(factory = factory)
-    
+
     val currentSyncHours by viewModel.syncIntervalHours.collectAsState()
     var sliderValue by remember { mutableStateOf(currentSyncHours.toFloat()) }
 
     LaunchedEffect(currentSyncHours) {
         sliderValue = currentSyncHours.toFloat()
     }
-    
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,37 +55,37 @@ fun SyncSettingsScreen(
             IconButton(onClick = onBackClick, modifier = Modifier.align(Alignment.CenterStart)) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                    contentDescription = "Назад"
+                    contentDescription = stringResource(R.string.back)
                 )
             }
             Text(
-                text = "Синхронизация",
+                text = stringResource(R.string.sync_settings_title),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.align(Alignment.Center)
             )
         }
-        
+
         Spacer(modifier = Modifier.height(32.dp))
-        
+
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Интервал синхронизации",
+                text = stringResource(R.string.sync_interval_title),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
-            
+
             Text(
-                text = "${sliderValue.toInt()} часов",
+                text = stringResource(R.string.sync_interval_hours, sliderValue.toInt()),
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
-            
+
             Slider(
                 value = sliderValue,
-                onValueChange = { 
+                onValueChange = {
                     sliderValue = it
                     viewModel.setSyncIntervalHours(it.toInt())
                 },
@@ -93,19 +95,19 @@ fun SyncSettingsScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "1 час",
+                    text = stringResource(R.string.sync_interval_1_hour),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    text = "24 часа",
+                    text = stringResource(R.string.sync_interval_24_hours),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

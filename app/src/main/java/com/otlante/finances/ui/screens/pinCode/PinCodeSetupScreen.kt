@@ -6,12 +6,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.otlante.finances.ui.composition.LocalViewModelFactory
+import com.otlante.finances.R
 
 @Composable
 fun PinCodeSetupScreen(
@@ -20,15 +22,15 @@ fun PinCodeSetupScreen(
 ) {
     val factory = LocalViewModelFactory.current
     val viewModel: PinCodeSetupViewModel = viewModel(factory = factory)
-    
+
     val uiState by viewModel.uiState.collectAsState()
-    
+
     LaunchedEffect(uiState.isPinSet) {
         if (uiState.isPinSet) {
             onPinSet()
         }
     }
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -38,41 +40,41 @@ fun PinCodeSetupScreen(
     ) {
         Text(
             text = when (uiState.step) {
-                PinSetupStep.FIRST_ENTER -> "Установите PIN-код"
-                PinSetupStep.CONFIRM -> "Подтвердите PIN-код"
+                PinSetupStep.FIRST_ENTER -> stringResource(R.string.pin_code_setup_title_first)
+                PinSetupStep.CONFIRM -> stringResource(R.string.pin_code_setup_title_confirm)
             },
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center
         )
-        
+
         Spacer(modifier = Modifier.height(32.dp))
-        
+
         Text(
             text = when (uiState.step) {
-                PinSetupStep.FIRST_ENTER -> "Введите 4-значный PIN-код"
-                PinSetupStep.CONFIRM -> "Повторите PIN-код для подтверждения"
+                PinSetupStep.FIRST_ENTER -> stringResource(R.string.pin_code_setup_subtitle_first)
+                PinSetupStep.CONFIRM -> stringResource(R.string.pin_code_setup_subtitle_confirm)
             },
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        
+
         Spacer(modifier = Modifier.height(32.dp))
-        
+
         OutlinedTextField(
             value = uiState.pinCode,
-            onValueChange = { 
+            onValueChange = {
                 if (it.length <= 4 && it.all { char -> char.isDigit() }) {
                     viewModel.updatePinCode(it)
                 }
             },
-            label = { Text("PIN-код") },
+            label = { Text(stringResource(R.string.pin_code_label)) },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
-        
+
         if (uiState.errorMessage.isNotEmpty()) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -82,9 +84,9 @@ fun PinCodeSetupScreen(
                 textAlign = TextAlign.Center
             )
         }
-        
+
         Spacer(modifier = Modifier.height(32.dp))
-        
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -93,11 +95,11 @@ fun PinCodeSetupScreen(
                 onClick = onBack,
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Отмена")
+                Text(stringResource(R.string.pin_code_cancel))
             }
-            
+
             Spacer(modifier = Modifier.width(16.dp))
-            
+
             Button(
                 onClick = { viewModel.confirmPin() },
                 enabled = uiState.pinCode.length == 4,
@@ -105,8 +107,8 @@ fun PinCodeSetupScreen(
             ) {
                 Text(
                     when (uiState.step) {
-                        PinSetupStep.FIRST_ENTER -> "Далее"
-                        PinSetupStep.CONFIRM -> "Установить"
+                        PinSetupStep.FIRST_ENTER -> stringResource(R.string.pin_code_setup_next)
+                        PinSetupStep.CONFIRM -> stringResource(R.string.pin_code_setup_install)
                     }
                 )
             }
