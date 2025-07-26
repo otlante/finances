@@ -18,6 +18,7 @@ import com.otlante.finances.ui.screens.income.IncomeScreen
 import com.otlante.finances.ui.screens.settings.SettingsScreen
 import com.otlante.finances.ui.screens.settings.VibrationSettingsScreen
 import com.otlante.finances.ui.screens.settings.PrimaryColorPickerScreen
+import com.otlante.finances.ui.screens.settings.SyncSettingsScreen
 import com.otlante.finances.ui.screens.pinCode.PinCodeSetupScreen
 import com.otlante.finances.ui.screens.pinCode.PinCodeEntryScreen
 import com.otlante.finances.ui.screens.pinCode.PinCodeDisableScreen
@@ -67,11 +68,15 @@ fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHos
                 onVibrationClick = { navController.navigate(NavDestination.VibrationSettings.route) },
                 onPrimaryColorClick = { navController.navigate(NavDestination.PrimaryColorPicker.route) },
                 onPinCodeClick = { navController.navigate(NavDestination.PinCodeSetup.route) },
-                onPinCodeDisableClick = { navController.navigate(NavDestination.PinCodeDisable.route) }
+                onPinCodeDisableClick = { navController.navigate(NavDestination.PinCodeDisable.route) },
+                onSyncClick = { navController.navigate(NavDestination.SyncSettings.route) }
             )
         }
         composable(route = NavDestination.VibrationSettings.route) {
             VibrationSettingsScreen(onBack = { navController.popBackStack() })
+        }
+        composable(route = NavDestination.SyncSettings.route) {
+            SyncSettingsScreen(onBackClick = { navController.popBackStack() })
         }
         composable(
             route = NavDestination.History.routeWithArgument,
@@ -109,14 +114,14 @@ fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHos
                 onBack = { navController.popBackStack() }
             )
         }
-        
+
         composable(route = NavDestination.PinCodeSetup.route) {
             PinCodeSetupScreen(
                 onBack = { navController.popBackStack() },
                 onPinSet = { navController.popBackStack() }
             )
         }
-        
+
         composable(route = NavDestination.PinCodeEntry.route) {
             PinCodeEntryScreen(
                 onPinCorrect = {
@@ -126,7 +131,7 @@ fun AppNavGraph(navController: NavHostController, snackBarHostState: SnackbarHos
                 }
             )
         }
-        
+
         composable(route = NavDestination.PinCodeDisable.route) {
             PinCodeDisableScreen(
                 onBack = { navController.popBackStack() },

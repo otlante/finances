@@ -37,6 +37,12 @@ class SettingsViewModel @Inject constructor(
             SharingStarted.Lazily,
             SettingsDataStore.DEFAULT_PRIMARY_COLOR
         )
+    val syncIntervalHours: StateFlow<Int> =
+        settingsDataStore.syncIntervalHours.stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            SettingsDataStore.DEFAULT_SYNC_INTERVAL_HOURS
+        )
     val isPinSet: StateFlow<Boolean> = pinCodeRepository.isPinSet
 
     private val _settingsItems = MutableStateFlow<List<SettingItem>>(emptyList())
@@ -90,5 +96,9 @@ class SettingsViewModel @Inject constructor(
 
     fun setPrimaryColor(color: Int) {
         viewModelScope.launch { settingsDataStore.setPrimaryColor(color) }
+    }
+
+    fun setSyncIntervalHours(hours: Int) {
+        viewModelScope.launch { settingsDataStore.setSyncIntervalHours(hours) }
     }
 }

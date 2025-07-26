@@ -6,7 +6,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.otlante.finances.domain.entity.SettingItem
 import com.otlante.finances.ui.components.ListItem
@@ -23,7 +22,8 @@ fun SettingsScreen(
     onVibrationClick: () -> Unit,
     onPrimaryColorClick: () -> Unit,
     onPinCodeClick: () -> Unit,
-    onPinCodeDisableClick: () -> Unit
+    onPinCodeDisableClick: () -> Unit,
+    onSyncClick: () -> Unit
 ) {
 
     val factory = LocalViewModelFactory.current
@@ -46,6 +46,7 @@ fun SettingsScreen(
                     "Хаптики" -> onVibrationClick
                     "Основной цвет" -> onPrimaryColorClick
                     "Код пароль" -> if (isPinSet) onPinCodeDisableClick else onPinCodeClick
+                    "Синхронизация" -> onSyncClick
                     else -> item.onClick
                 }
             )

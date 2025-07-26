@@ -49,12 +49,14 @@ sealed class NavDestination(val route: String) {
     data object VibrationSettings : NavDestination("vibrationSettings")
 
     data object PrimaryColorPicker : NavDestination("primaryColorPicker")
-    
+
     data object PinCodeSetup : NavDestination("pinCodeSetup")
-    
+
     data object PinCodeEntry : NavDestination("pinCodeEntry")
-    
+
     data object PinCodeDisable : NavDestination("pinCodeDisable")
+
+    data object SyncSettings : NavDestination("syncSettings")
 
     sealed class BottomNav(
         route: String,
