@@ -50,7 +50,13 @@ fun AppBottomNavBar(
                     navBackStackEntry?.arguments?.getString(NavDestination.AddOrEditTrans.MODE_ARG)
                 (transactionMode?.lowercase()?.endsWith(destination.route))
                     ?: (destination.route == NavDestination.BottomNav.Incomes.route)
-            } else if (currentRoute == NavDestination.VibrationSettings.route) {
+            } else if ( // For settings inner screens
+                currentRoute == NavDestination.VibrationSettings.route ||
+                currentRoute == NavDestination.PrimaryColorPicker.route ||
+                currentRoute == NavDestination.PinCodeSetup.route ||
+                currentRoute == NavDestination.PinCodeDisable.route ||
+                currentRoute == NavDestination.SyncSettings.route
+            ) {
                 destination.route == NavDestination.BottomNav.Settings.route
             } else {
                 currentRoute == destination.route
