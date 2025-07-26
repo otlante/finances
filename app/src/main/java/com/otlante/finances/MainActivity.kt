@@ -45,19 +45,19 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
+//        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
         activityComponent = appComponent.activityComponent().create()
         activityComponent.inject(this)
 
-        val splashViewModel: SplashViewModel by viewModels {
-            activityComponent.viewModelFactory()
-        }
-        splashScreen.setKeepOnScreenCondition { !splashViewModel.isReady.value }
-        splashScreen.setOnExitAnimationListener { splashScreenView ->
-            splashScreenView.remove()
-        }
+//        val splashViewModel: SplashViewModel by viewModels {
+//            activityComponent.viewModelFactory()
+//        }
+//        splashScreen.setKeepOnScreenCondition { !splashViewModel.isReady.value }
+//        splashScreen.setOnExitAnimationListener { splashScreenView ->
+//            splashScreenView.remove()
+//        }
         WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
         setContent {

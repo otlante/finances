@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -72,7 +73,9 @@ fun PinCodeSetupScreen(
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("pin_code_input")
         )
 
         if (uiState.errorMessage.isNotEmpty()) {
@@ -103,7 +106,7 @@ fun PinCodeSetupScreen(
             Button(
                 onClick = { viewModel.confirmPin() },
                 enabled = uiState.pinCode.length == 4,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).testTag("pin_code_next")
             ) {
                 Text(
                     when (uiState.step) {
